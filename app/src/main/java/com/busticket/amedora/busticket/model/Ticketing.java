@@ -19,6 +19,7 @@ public class Ticketing {
     public String route;
     public String driver;
     public String conductor;
+    public int status;
 
     public Ticketing(){
 
@@ -43,6 +44,10 @@ public class Ticketing {
     public void setDriver(String driver){this.driver = driver;}
     public void setConductor(String conductor){this.conductor = conductor;}
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public int getId(){return this.id;}
 
     public int getTicketing_id() {
@@ -66,5 +71,9 @@ public class Ticketing {
 
     public double getFare() {
         return fare;
+    }
+
+    public int getStatus() {
+        return status;
     }
 }

@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -28,13 +29,12 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.busticket.amedora.busticket.model.Bus;
-import com.busticket.amedora.busticket.model.Terminal;
-import com.busticket.amedora.busticket.model.Ticket;
-import com.busticket.amedora.busticket.model.Ticketing;
+import com.busticket.amedora.busticket.model.*;
 import com.busticket.amedora.busticket.utils.DatabaseHelper;
+import com.busticket.amedora.busticket.utils.Installation;
 import com.zj.btsdk.BluetoothService;
 import com.zj.btsdk.PrintPic;
 
@@ -57,22 +57,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 /**
  * Created by Amedora on 12/6/2015.
  */
-public class GenerateTicketActivity extends Activity {
+public class GenerateTicketActivity extends AppCompatActivity {
     DatabaseHelper db = new DatabaseHelper(this);
     String board,highlight,trip,bus;
     Terminal boardStage,highlightStage;
     Bus busBoarded;
     Ticket ticket;
-    RequestQueue mQueue;
+    RequestQueue kQueue;
     public final static int WHITE = 0xFFFFFFFF;
     public final static int BLACK = 0xFF000000;
-
+    double balance=0;
     Button btnSearch;
     Button btnSendDraw;
     String msg;
@@ -86,7 +87,7 @@ public class GenerateTicketActivity extends Activity {
     BluetoothService mService = null;
     BluetoothDevice con_dev = null;
     private static final int REQUEST_CONNECT_DEVICE = 1;
-
+    Apps apps;
     protected void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.layout_ticket_preview);
@@ -95,21 +96,22 @@ public class GenerateTicketActivity extends Activity {
         highlight 		= bundle.getString("Highlight");
         trip =bundle.getString("Trip");
         bus = bundle.getString("Bus");
-        mQueue = Volley.newRequestQueue(getApplicationContext());
+        apps = db.getApp(Installation.appId(getApplicationContext()));
         boardStage = db.getTerminalByName(board);
         highlightStage = db.getTerminalByName(highlight);
         busBoarded = db.getBusByPlateNo(bus);
         ticket = db.getUnusedTicket();
+
         tvPreview  = (TextView) findViewById(R.id.tvPreview);
         imgV = (ImageView)findViewById(R.id.imgView);
-        msg= "Ticket ID:       "+ticket.getTicket_id()+"\n\n"
-                +"Board Stage:     "+ boardStage.getShort_name() +"\n\n"
-                +"Highlight Stage: "+ highlightStage.getShort_name()+ "\n\n"
-                +"Amount:          "+ticket.getAmount()+"\n\n"
-                +"Bus No:          "+ bus +"\n\n"
-                +"Driver: "+busBoarded.getDriver()+"   Conductor: "+busBoarded.getConductor() +"\n\n"
-                +"Serial No:       "+ticket.getSerial_no() +"\n\n"
-                +"Code:         "+ticket.getScode().toUpperCase()+"\n\n";
+        msg=    "Ticket ID:     "+ ticket.getTicket_id()+"\n\n"
+                +"Boarding:     "+ boardStage.getShort_name() +"\n\n"
+                +"Alighting:    "+ highlightStage.getShort_name()+ "\n\n"
+                +"Amount:       "+ "SLL "+ticket.getAmount()+"\n\n"
+                +"Bus No:       "+ bus +"\n\n"
+                +"Driver: "+busBoarded.getDriver()+"   Agent: "+busBoarded.getConductor() +"\n\n"
+                +"Serial No:    "+ ticket.getSerial_no() +"\n\n"
+                +"Code:         "+ ticket.getScode().toUpperCase()+"\n\n";
 
         tvPreview.setText(msg);
 
@@ -136,12 +138,18 @@ public class GenerateTicketActivity extends Activity {
             btnSearch.setOnClickListener(new ClickEvent());
             btnClose = (Button) this.findViewById(R.id.btnClose);
             btnClose.setOnClickListener(new ClickEvent());
-            edtContext = (EditText) findViewById(R.id.txt_content);
+            //edtContext = (EditText) findViewById(R.id.txt_content);
             btnClose.setEnabled(false);
 
             btnSendDraw.setEnabled(false);
         } catch (Exception ex) {
             Log.e("ERRORMSG", ex.getMessage());
+        }
+
+        try{
+            kQueue = Volley.newRequestQueue(getApplicationContext());
+        }catch(Exception e){
+            Log.e("ERRORMSG", e.getMessage());
         }
     }
 
@@ -162,34 +170,25 @@ public class GenerateTicketActivity extends Activity {
             } else if (v == btnClose) {
                 mService.stop();
             } else if (v == btnSendDraw) {
-
-
                 dialog = ProgressDialog.show(GenerateTicketActivity.this, "",
                         "Generating Ticket...", true);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-
                         Looper.prepare();
-
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 sendToPrinter();
-                                //updateTicket();
+                                updateTicket();
                                 handler.removeCallbacks(this);
-
                                 Looper.myLooper().quit();
                             }
                         }, 2000);
-
                         Looper.loop();
                     }
                 }).start();
-
-
-
             }
         }
     }
@@ -215,7 +214,7 @@ public class GenerateTicketActivity extends Activity {
             switch (msg.what) {
                 case BluetoothService.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothService.STATE_CONNECTED:   //������
+                        case BluetoothService.STATE_CONNECTED:
                            // printQrCode();
                             Toast.makeText(getApplicationContext(), "Connect successful",
                                     Toast.LENGTH_SHORT).show();
@@ -223,23 +222,23 @@ public class GenerateTicketActivity extends Activity {
 
                             btnSendDraw.setEnabled(true);
                             break;
-                        case BluetoothService.STATE_CONNECTING:  //��������
+                        case BluetoothService.STATE_CONNECTING:
                             Log.d("PRINTER", "Connecting.....");
                             break;
-                        case BluetoothService.STATE_LISTEN:     //�������ӵĵ���
+                        case BluetoothService.STATE_LISTEN:
                         case BluetoothService.STATE_NONE:
                             Log.d("PRINTER","Not Available.....");
                             break;
                     }
                     break;
-                case BluetoothService.MESSAGE_CONNECTION_LOST:    //�����ѶϿ�����
+                case BluetoothService.MESSAGE_CONNECTION_LOST:
                     Toast.makeText(getApplicationContext(), "Device connection was lost",
                             Toast.LENGTH_SHORT).show();
                     btnClose.setEnabled(false);
 
                     btnSendDraw.setEnabled(false);
                     break;
-                case BluetoothService.MESSAGE_UNABLE_CONNECT:     //�޷������豸
+                case BluetoothService.MESSAGE_UNABLE_CONNECT:
                     Toast.makeText(getApplicationContext(), "Unable to connect device",
                             Toast.LENGTH_SHORT).show();
                     break;
@@ -367,6 +366,7 @@ public class GenerateTicketActivity extends Activity {
             }else{
                 ticketing.setFare(highlightStage.getOne_way_from_fare());
             }
+
             ticketing.setDriver(busBoarded.getDriver());
             ticketing.setConductor(busBoarded.getConductor());
             ticketing.setQty(1);
@@ -375,36 +375,43 @@ public class GenerateTicketActivity extends Activity {
             ticketing.setTicketing_id(ticket.getTicket_id());
             ticketing.setScode(ticket.getScode());
             ticketing.setBus_no(busBoarded.getPlate_no());
-            ticketing.setRoute("IKD-TBS");
+            ticketing.setRoute(apps.getRoute_name());
             ticketing.setTripe(trip);
             ticketing.setSerial_no(ticket.getSerial_no());
 
             if(db.createTicketing(ticketing) >0){
-                String url ="http://41.77.173.124:81/busticketAPI/terminals/index";
+                String url ="http://41.77.173.124:81/busticketAPI/ticketing/create/";
                 HashMap<String, String> params = new HashMap<String, String>();
                 String ticket_id = Integer.toString(ticket.getTicket_id());
                 params.put("ticket_id",ticket_id);
                 params.put("serial_no",ticket.getSerial_no());
                 params.put("trip",trip);
+                params.put("app_id",apps.getApp_id());
                 params.put("route_id",Integer.toString(busBoarded.getRoute_id()));
-                params.put("route_name","IKD-TBS");
+                params.put("route_name",apps.getRoute_name());
                 params.put("bus_id",Integer.toString(busBoarded.getBus_id()));
                 params.put("bus_plate_no",busBoarded.getPlate_no());
                 params.put("scode",ticket.getScode());
-                params.put("highlight_stage",highlightStage.getShort_name());
+                params.put("alight_stage",highlightStage.getShort_name());
                 params.put("board_stage",boardStage.getShort_name());
                 params.put("conductor",busBoarded.getConductor());
                 params.put("driver",busBoarded.getDriver());
                 params.put("status","0");
                 params.put("created_at",db.getDateTime());
+
                 JsonObjectRequest req = new JsonObjectRequest(url, new JSONObject(params), new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try{
-                            if(response.getString("msg") == "success"){
+                            if(Boolean.getBoolean(response.getString("success")) == true){
+                                apps.setBalance(apps.getBalance() - ticket.getAmount());
+                                balance = apps.getBalance() - ticket.getAmount();
+                                db.updateApp(apps);
+
+                                updateAccount();
                                 Toast.makeText(GenerateTicketActivity.this,"Record Updated to server Successfully", Toast.LENGTH_SHORT).show();
                             }else{
-                                Toast.makeText(GenerateTicketActivity.this,"Unexpected Error", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(GenerateTicketActivity.this,"Unexpected Error! Ticket could not be uploaded to server ", Toast.LENGTH_SHORT).show();
                             }
                         }catch (Exception e){
                             Toast.makeText(GenerateTicketActivity.this,e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -413,10 +420,11 @@ public class GenerateTicketActivity extends Activity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("BTICKET", "Error: " + error.getMessage());
                         Toast.makeText(GenerateTicketActivity.this,error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-            mQueue.add(req);
+            kQueue.add(req);
             }
             dialog.dismiss();
             Toast.makeText(GenerateTicketActivity.this, "Ticket Successful Generated", Toast.LENGTH_SHORT).show();
@@ -445,19 +453,19 @@ public class GenerateTicketActivity extends Activity {
         qrCode[1] = (byte) 0x3a;
         qrCode[2] = (byte) 0x10;
         qrCode[3] = (byte) 0x00;
-
-        for (char ch : ticket.getScode().toCharArray()) {
+        String ticketingData = Integer.toString(ticket.getTicket_id());//+"@"+ticket.getScode()
+        for (char ch : ticketingData.toCharArray()) {
             qrCode[k] = (byte) (int) ch;
             k++;
         }
 
-
+       // Route route = db.getRouteByName("IKD-CMS");
         cmd[0] = 0x1b;
         cmd[1] = 0x21;
         if ((lang.compareTo("en")) == 0) {
             cmd[2] |= 0x10;
             mService.write(cmd);
-            mService.sendMessage("BUS TICKET    ROUTE: IKD-TBS \n", "GBK");
+            mService.sendMessage("BUS TICKET    ROUTE: "+apps.getRoute_name()+"\n", "GBK");
             cmd[2] &= 0xEF;
             mService.write(cmd);
             mService.sendMessage(msg, "GBK");
@@ -467,5 +475,26 @@ public class GenerateTicketActivity extends Activity {
         }
     }
 
+
+    public void updateAccount(){
+        String url ="http://41.77.173.124:81/busticketAPI/account/update/";
+        HashMap<String,String> params = new HashMap<String,String>();
+        params.put("merchant_id",apps.getAgent_id());
+        params.put("app_id",apps.getApp_id());
+        params.put("balance",Double.toString(balance));
+
+        JsonObjectRequest uAccount = new JsonObjectRequest(url,new JSONObject(params), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Toast.makeText(GenerateTicketActivity.this, "Account Updated", Toast.LENGTH_SHORT).show();
+            }
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(GenerateTicketActivity.this, "Account balance could not be updated Unexpected Errors", Toast.LENGTH_SHORT).show();
+            }
+        });
+        kQueue.add(uAccount);
+    }
 
 }

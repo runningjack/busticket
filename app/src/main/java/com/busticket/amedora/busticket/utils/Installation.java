@@ -48,4 +48,10 @@ public class Installation {
         out.write(AppId.getBytes());
         out.close();
     }
+
+    public static void deleteInstallionFile(Context context)throws IOException {
+        File file = new File(context.getFilesDir(),INSTALLATION);
+        if(!file.exists())
+            file.delete();
+    }
 }

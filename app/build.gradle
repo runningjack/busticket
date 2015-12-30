@@ -4,12 +4,23 @@ android {
     compileSdkVersion 22
     buildToolsVersion "21.1.2"
 
+    signingConfigs{
+        release{
+            keyAlias "busticket"
+            keyPassword "medimedi2012"
+            storeFile file("C:\\Users\\Amedora\\Desktop\\busticketapk\\busticket.jks")
+            storePassword "medimedi2012"
+        }
+    }
+
     defaultConfig {
         applicationId "com.busticket.amedora.busticket"
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+        signingConfigs.release
+
     }
     buildTypes {
         release {

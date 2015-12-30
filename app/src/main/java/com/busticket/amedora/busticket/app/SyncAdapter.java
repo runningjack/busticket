@@ -48,7 +48,7 @@ import java.util.List;
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     ContentResolver mContentResolver;
-    List<NameValuePair> nameValuePairs;
+
     String ERRORMSG;boolean success=false;
     //Account newAccount = new Account("dummyaccount", "com.sportsteamkarma");
 
@@ -63,11 +63,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         /*
          * If your app uses a content resolver, get an instance of it
          * from the incoming Context*/
-
         android.os.Debug.waitForDebugger();
-        mContentResolver = context.getContentResolver();
+        //mContentResolver = context.getContentResolver();
         mContext = context;
-        mContentResolver = context.getContentResolver();
+        //mContentResolver = context.getContentResolver();
         mQueue = Volley.newRequestQueue(context);
     }
 
@@ -76,19 +75,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      * constructor maintains compatibility with Android 3.0
      * and later platform versions
      */
-    public SyncAdapter(
-            Context context,
-            boolean autoInitialize,
-            boolean allowParallelSyncs) {
+    public SyncAdapter(Context context,boolean autoInitialize,boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
         /*
          * If your app uses a content resolver, get an instance of it
          * from the incoming Context
          */
-        mContentResolver = context.getContentResolver();
-
+      //  mContentResolver = context.getContentResolver();
         mContext = context;
-        mContentResolver = context.getContentResolver();
+       // mContentResolver = context.getContentResolver();
         mQueue = Volley.newRequestQueue(context);
     }
 
@@ -98,19 +93,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     * up your own background processing.
     */
     @Override
-    public void onPerformSync(
-            Account account,
-            Bundle extras,
-            String authority,
-            ContentProviderClient provider,
-            SyncResult syncResult) {
+    public void onPerformSync(Account account, Bundle extras,String authority,ContentProviderClient provider,SyncResult syncResult) {
     /*
      * Put the data transfer code here.
      */
-
-            insertTerminals();
-
-
+        Log.d("SYNC ERR","Insert Terminals Did not get called");
+        insertTerminals();
     }
 
     private void insertTerminals(){
@@ -163,52 +151,5 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         mQueue.add(jsonArrayRequest);
     }
 
-    private void insertBuses() {
-        HttpClient httpClient = new DefaultHttpClient();
 
-        String url ="http://41.77.173.124:81/busticketAPI/buses/index";
-        HttpPost httpPost =  new HttpPost(url);
-        nameValuePairs = new ArrayList<>(2);
-        nameValuePairs.add(new BasicNameValuePair("status","1"));
-        try{
-            //httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nameValuePairs);
-            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            httpPost.setEntity(entity);
-            HttpResponse response = httpClient.execute(httpPost);
-            db = new DatabaseHelper(context);
-            Integer status = response.getStatusLine().getStatusCode();
-            if(status ==200){
-                String result = EntityUtils.toString(response.getEntity());
-                JSONObject jsonResponse;
-                jsonResponse = new JSONObject(result);
-                // CONVERT RESPONSE STRING TO JSON ARRAY
-
-
-                Iterator<String> keysIterator = jsonResponse.keys();
-
-                while (keysIterator.hasNext())
-                {
-                    String keyStr = (String)keysIterator.next();
-                    String valueStr = jsonResponse.getString(keyStr);
-                }
-                /*JSONObject preferencesJSON = inputJSON.getJSONObject("Preferences");
-                Iterator<String> keysIterator = preferencesJSON.keys();
-                while (keysIterator.hasNext())
-                {
-                    String keyStr = (String)keysIterator.next();
-                    String valueStr = preferencesJSON.getString(keyStr);
-                }*/
-
-
-            }
-        }catch(Exception e){
-
-        }
-
-
-
-
-
-    }
 }

@@ -4,6 +4,6 @@
     android:contentAuthority="com.busticket.amedora.busticket.app"
     android:accountType="com.busticket.amedora.busticket.app"
     android:userVisible="false"
-    android:supportsUploading="false"
-    android:allowParallelSyncs="false"
+    android:supportsUploading="true"
+    android:allowParallelSyncs="true"
     android:isAlwaysSyncable="true"/>

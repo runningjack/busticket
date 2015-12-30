@@ -1,66 +1,96 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
-
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@drawable/background_splash_screen_4"
+    android:padding="10dp">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="75dp">
-
-
-
-        <Button
-            android:id="@+id/btnSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btnSearch" >
-        </Button>
-
-        <EditText
-            android:id="@+id/txt_content"
-            android:layout_width="match_parent"
-            android:layout_height="135dp"
-            android:gravity="center_vertical|top"
-            android:text="@string/txt_content"
-            android:textSize="16sp" >
-
-        </EditText>
-
-        <Button
-            android:id="@+id/btnSend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btnSend" >
-
-        </Button>
-
-        <Button
-            android:id="@+id/btn_test"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_test" >
-        </Button>
-
-        <Button
-            android:id="@+id/btnClose"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </Button>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/btnSend"
-            android:id="@+id/btnPrint" />
-
+        android:id="@+id/lnLayout">
 
     </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_btn_start_signin"
+        android:id="@+id/btnstartlogin"
+        android:layout_above="@+id/textView6"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/btn_bg_blue"
+        android:textColor="#ffffffff"
+        android:textAlignment="center"
+        android:typeface="monospace" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str_btn_register"
+        android:id="@+id/btnstartregister"
+        android:layout_below="@+id/textView6"
+        android:layout_centerHorizontal="true"
+        android:typeface="normal"
+        android:background="@drawable/btn_bg_teal"
+        android:textColor="#ffffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/srt_tv_get_started"
+        android:id="@+id/tvStartedIntro"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="107dp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        android:textSize="30sp"
+        tools:ignore="RelativeOverlap" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/str_already_instruction"
+        android:id="@+id/textView5"
+        android:layout_below="@+id/tvStartedIntro"
+        android:layout_centerHorizontal="true"
+        android:textColor="#95797979"
+        android:paddingTop="5dp"
+        android:textStyle="bold"
+        android:paddingBottom="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/str_tv_or"
+        android:id="@+id/textView6"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        tools:ignore="RelativeOverlap" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/str_tv_advice"
+        android:id="@+id/textView7"
+        android:textColor="#95797979"
+        android:paddingTop="5dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:layout_marginTop="75dp"
+        android:layout_below="@+id/textView6"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

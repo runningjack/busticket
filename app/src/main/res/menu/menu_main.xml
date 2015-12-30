@@ -1,6 +1,26 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"  xmlns:app="http://schemas.android.com/apk/res-auto" >
+<item
+    android:id="@+id/action_favorite"
+    android:icon="@drawable/abc_ic_menu_share_mtrl_alpha"
+    android:title="@string/abc_action_mode_done"
+    app:showAsAction="ifRoom"/>
+ <item
+    android:id="@+id/action_tickets"
+    android:icon="@drawable/cinema21"
+    android:title="Ticket"
+    app:showAsAction="ifRoom"
+    />
+<item
+    android:id="@+id/action_ticketing"
+    android:icon="@drawable/receive"
+    android:title="Prints"
+    app:showAsAction="ifRoom"
+    />
+
+<!-- Settings, should always be in the overflow -->
+<item android:id="@+id/action_settings"
+    android:title="@string/action_settings"
+    app:showAsAction="never"/>
+
+
 </menu>
