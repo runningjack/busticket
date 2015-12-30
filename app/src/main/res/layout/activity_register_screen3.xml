@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_splash_screen_4"
+    android:paddingTop="100dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.10" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:gravity="center"
+            android:text="@string/str_tv_screen_3_intro"
+            android:id="@+id/textView2"
+            android:layout_weight="0.04" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/edtPhone"
+            android:layout_weight="0.04"
+            android:hint="@string/str_edt_number"
+            android:layout_marginBottom="@dimen/edit_text_margin_bottom" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text=""
+            android:id="@+id/tvMessage3"
+            android:layout_weight="0.04"
+            android:textColor="#fffa3119" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="359dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2"
+        android:layout_weight="0.16"
+        android:weightSum="1">
+
+        <Button
+            android:layout_width="153dp"
+            android:layout_height="wrap_content"
+            android:text="@string/str_btn_previous3"
+            android:id="@+id/btnregback3"
+            android:background="@drawable/btn_bg_blue"
+            tools:ignore="ButtonStyle"
+            android:layout_weight="0.93"
+            android:layout_marginRight="5dp"
+            android:textColor="#fff" />
+
+        <Button
+            android:layout_width="177dp"
+            android:layout_height="wrap_content"
+            android:text="@string/str_btn_reg_next_1"
+            android:id="@+id/btnregnext3"
+            android:background="@drawable/btn_bg_blue"
+            android:capitalize="sentences"
+            android:layout_weight="0.53"
+            android:layout_marginLeft="5dp"
+            android:textColor="#fff" />
+
+    </LinearLayout>
+</LinearLayout>

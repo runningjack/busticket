@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_splash_screen_4"
+    android:weightSum="1"
+    android:paddingTop="100dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.24">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/str_tv_registration_intro"
+            android:id="@+id/textView"
+            android:layout_weight="0.03" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="@string/str_edt_hint_store_name"
+            android:ems="10"
+            android:capitalize="words"
+            android:id="@+id/edtStoreName"
+            android:layout_marginBottom="@dimen/edit_text_margin_bottom"
+            android:textSize="@dimen/dim_edt_font_size"
+             />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:capitalize="words"
+            android:hint="@string/str_edt_hint_store_contact"
+            android:ems="10"
+            android:id="@+id/edtStoreContact"
+            android:elegantTextHeight="false"
+            android:textSize="@dimen/dim_edt_font_size"
+            android:layout_marginBottom="@dimen/edit_text_margin_bottom"
+             />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/edtEmail"
+            android:textSize="@dimen/dim_edt_font_size"
+            android:hint="@string/str_edt_email"
+            android:layout_marginBottom="@dimen/edit_text_margin_bottom" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="166dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/layoutReg1"
+        android:layout_gravity="right"
+        android:layout_weight="0.16">
+        <Button
+            android:layout_width="152dp"
+            android:layout_height="wrap_content"
+            android:text="@string/str_btn_reg_next_1"
+            android:id="@+id/btnregnext1"
+            android:background="@drawable/btn_bg_blue"
+            android:capitalize="sentences"
+            android:layout_marginTop="@dimen/dim_margin_top_20dp"
+            tools:ignore="TextViewEdits"
+            android:textColor="#fff" />
+    </LinearLayout>
+</LinearLayout>

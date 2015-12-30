@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_splash_screen_4"
+    android:paddingTop="100dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/str_tv_select_pos_bank"
+        android:id="@+id/tvSelectPOSBank"
+        android:layout_weight="0.00"
+        android:paddingBottom="@dimen/edit_text_margin_bottom" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/str_tv_reg_screen_route"
+        android:id="@+id/tvRegScreenRoute"
+        android:layout_weight="0.00" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.00"
+        android:spinnerMode="dropdown"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/str_tv_reg_screen_terminal"
+        android:id="@+id/tvRegScreenTerminal"
+        android:layout_weight="0.00" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spRegScreenStation"
+        android:layout_weight="0.00"
+        android:spinnerMode="dropdown" />
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout"
+        android:layout_weight="0.10"
+        android:layout_gravity="right">
+
+        <Button
+            android:layout_width="182dp"
+            android:layout_height="wrap_content"
+            android:text="@string/str_btn_previous2"
+            android:id="@+id/btnRegBackBank"
+            android:background="@drawable/btn_bg_blue"
+            android:layout_marginRight="5dp"
+            android:textColor="#fff" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/str_btn_reg_next_1"
+            android:id="@+id/btnNextBank"
+            android:layout_gravity="right"
+            android:background="@drawable/btn_bg_blue"
+            android:capitalize="sentences"
+            android:layout_marginLeft="5dp"
+            android:textColor="#fff"
+            tools:ignore="Deprecated" />
+
+    </LinearLayout>
+</LinearLayout>
