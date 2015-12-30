@@ -9,7 +9,7 @@ public class Ticket {
     public String serial_no;
     public int terminal_id;
     public int route_id;
-    public int ticket_id;
+    public long ticket_id;
     public String batch_code;
     public String ticket_type;
     public double amount;
@@ -21,7 +21,11 @@ public class Ticket {
 
     }
 
-    public Ticket(String scode, String serial_no, int terminal_id, int route_id, String batch_code, String ticket_type, double amount, int ticket_id, int status){
+    public boolean isValid() {
+        return batch_code != null && serial_no != null && scode != null;
+    }
+
+    public Ticket(String scode, String serial_no, int terminal_id, int route_id, String batch_code, String ticket_type, double amount, long ticket_id, int status){
         this.scode          =   scode;
         this.serial_no      =   serial_no;
         this.terminal_id    =   terminal_id;
@@ -34,7 +38,7 @@ public class Ticket {
     }
 
     public void setId(int id ){this.id = id;}
-    public void setTicket_id(int ticket_id){this.ticket_id = ticket_id;}
+    public void setTicket_id(long ticket_id){this.ticket_id = ticket_id;}
     public void setScode(String scode){this.scode = scode;}
     public void setSerial_no(String serial_no){this.serial_no = serial_no;}
     public void setTerminal_id(int terminal_id){this.terminal_id = terminal_id;}
@@ -47,10 +51,11 @@ public class Ticket {
     }
 
     public void setAmount(double amount){this.amount = amount;}
+    public void setCreated_at(String created_at){this.created_at = created_at;}
 
     public int getId(){return this.id;}
 
-    public int getTicket_id() {
+    public long getTicket_id() {
         return ticket_id;
     }
 

@@ -32,7 +32,7 @@
         </activity>
         <activity android:name="DeviceListActivity" android:label="@string/select_device" android:theme="@android:style/Theme.Dialog"></activity>
         <activity android:name=".GenerateTicketActivity" android:label="Print Preview"
-            android:parentActivityName=".TicketingHomeActivity" android:theme="@android:style/Theme.Dialog">
+            android:parentActivityName=".TicketingHomeActivity">
         </activity>
         <activity android:name=".LoadingFeatures" android:parentActivityName=".MainActivity" />
         <activity android:name=".TicketingHomeActivity" android:label="Bus Ticket"
@@ -50,6 +50,11 @@
         <activity android:name=".RegisterActivity4" android:label="Registration Screen 4"
             android:parentActivityName=".RegisterActivity3">
         </activity>
+
+        <activity android:name=".TicketListActivity" android:label="Ticket Data"
+            android:parentActivityName=".TicketingHomeActivity">
+        </activity>
+
         <activity android:name=".RegisterActivityBank" android:label="Final Screen"
             android:parentActivityName=".RegisterActivity4">
         </activity>

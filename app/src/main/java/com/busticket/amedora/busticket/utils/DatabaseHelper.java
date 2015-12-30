@@ -233,7 +233,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_UPDATED_AT,getDateTime());
         // updating row
         int k = dbuRoute.update(TABLE_ROUTE, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(route.getId()) });
+                new String[]{String.valueOf(route.getId())});
 
         dbuRoute.close();
         return k;
@@ -243,7 +243,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteRoute(Route account) {
         SQLiteDatabase dbdRoute = this.getWritableDatabase();
         dbdRoute.delete(TABLE_ROUTE, KEY_ID + " = ?",
-                new String[] { String.valueOf(account.getId()) });
+                new String[]{String.valueOf(account.getId())});
         dbdRoute.close();
     }
 
@@ -299,7 +299,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase dbiffAcc = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM "+TABLE_ROUTE+" WHERE "
                 +KEY_ROUTE_SHORT_NAME + " ='" +account.getShort_name()+"'";
-        Cursor cursor = dbiffAcc.rawQuery(selectQuery,null);
+        Cursor cursor = dbiffAcc.rawQuery(selectQuery, null);
 
         if(cursor.moveToFirst()) {
             cursor.close();
@@ -345,7 +345,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
         long k =dbuAcc.update(TABLE_ACCOUNT, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(account.getId()) });
+                new String[]{String.valueOf(account.getId())});
         dbuAcc.close();
         return k;
     }
@@ -508,7 +508,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase dbgetBankByName = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM "+TABLE_BANKS+" WHERE "
                 + KEY_BANK_SHORT_NAME +" ='"+bankName+"'";
-        Cursor cursor = dbgetBankByName.rawQuery(selectQuery,null);
+        Cursor cursor = dbgetBankByName.rawQuery(selectQuery, null);
         if(cursor.getCount() > 0) {
             cursor.moveToFirst();
             bank.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
@@ -576,7 +576,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase dbgetApp = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM "+TABLE_APP+" WHERE "
                 + KEY_APP_ID +" ='"+app_id+"'";
-        Cursor cursor = dbgetApp.rawQuery(selectQuery,null);
+        Cursor cursor = dbgetApp.rawQuery(selectQuery, null);
         if(cursor != null) {
             cursor.moveToFirst();
             apps.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
@@ -620,7 +620,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_TRANS_NARRATION,transaction.getNarration());
         values.put(KEY_CREATED_AT,getDateTime());
         values.put(KEY_UPDATED_AT,getDateTime());
-        Long trans_row_id = db.insert(TABLE_TRANS,null,values);
+        Long trans_row_id = db.insert(TABLE_TRANS, null, values);
 
 
         db.close();
@@ -642,7 +642,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // updating row
         long k = db.update(TABLE_TRANS, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(transaction.getId()) });
+                new String[]{String.valueOf(transaction.getId())});
 
         db.close();
         return k;
@@ -653,7 +653,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteTransaction(Transaction account) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TRANS, KEY_ID + " = ?",
-                new String[] { String.valueOf(account.getId()) });
+                new String[]{String.valueOf(account.getId())});
         db.close();
     }
 
@@ -661,7 +661,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Transaction> transList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM "+ TABLE_TRANS;
-        Cursor c =db.rawQuery(sql,null);
+        Cursor c =db.rawQuery(sql, null);
 
         if(c != null){
             if(c.moveToFirst()){
@@ -713,7 +713,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM "+ TABLE_TRANS+" ORDER BY "+KEY_ID+" DESC LIMIT 1";
 
-        Cursor c =db.rawQuery(sql,null);
+        Cursor c =db.rawQuery(sql, null);
         if( c.getCount()>0){
             c.moveToFirst();
             sortCode = c.getInt(c.getColumnIndex(KEY_ID));
@@ -747,7 +747,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_TERMINAL_TO_FARE,terminal.getOne_way_to_fare());
         values.put(KEY_TERMINAL_FROM_FARE,terminal.getOne_way_from_fare());
         values.put(KEY_CREATED_AT,getDateTime());
-        values.put(KEY_UPDATED_AT,getDateTime());
+        values.put(KEY_UPDATED_AT, getDateTime());
         long acc_id = dbcreateTerminal.insert(TABLE_TERMINALS, null, values);
 
         dbcreateTerminal.close();
@@ -826,8 +826,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_TERMINAL_GEODATA,terminal.getGeodata());
         values.put(KEY_TERMINAL_DISTANCE,terminal.getDistance());
         values.put(KEY_TERMINAL_TO_FARE,terminal.getOne_way_to_fare());
-        values.put(KEY_TERMINAL_FROM_FARE,terminal.getOne_way_from_fare());
-        values.put(KEY_UPDATED_AT,getDateTime());
+        values.put(KEY_TERMINAL_FROM_FARE, terminal.getOne_way_from_fare());
+        values.put(KEY_UPDATED_AT, getDateTime());
         // updating row
         return db.update(TABLE_TERMINALS, values, KEY_TERMINAL_ID + " = ?",
                 new String[] { String.valueOf(terminal.getTerminal_id()) });
@@ -906,7 +906,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_TICKET_AMOUNT, ticket.getAmount());
         values.put(KEY_TICKET_STATUS,0);
         values.put(KEY_CREATED_AT,getDateTime());
-        values.put(KEY_UPDATED_AT,getDateTime());
+        values.put(KEY_UPDATED_AT, getDateTime());
         long acc_id = dbcreateTicket.insert(TABLE_TICKET, null, values);
 
         dbcreateTicket.close();
@@ -923,7 +923,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ticket.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
                 ticket.setTerminal_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_TERMINAL_ID)));
                 ticket.setRoute_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_ROUTE_ID)));
-                ticket.setTicket_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_ID)));
+                ticket.setTicket_id(cursor.getLong(cursor.getColumnIndex(KEY_TICKET_ID)));
                 ticket.setScode(cursor.getString(cursor.getColumnIndex(KEY_TICKET_SCODE)));
                 ticket.setSerial_no(cursor.getString(cursor.getColumnIndex(KEY_TICKET_SERIAL_NO)));
                 ticket.setBatch_code(cursor.getString(cursor.getColumnIndex(KEY_TICKET_BATCH_CODE)));
@@ -937,23 +937,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ticket;
     }
 
-    public Ticket getUnusedTicket(){
-        Ticket ticket   = new Ticket();
+    public ArrayList<Ticket> getUnusedTickets(){
+        ArrayList<Ticket> ticketList = new ArrayList<Ticket>();
         SQLiteDatabase dbgetUnusedTicket = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM "+TABLE_TICKET+" WHERE "+KEY_TICKET_STATUS+ "= 0";
         Cursor cursor = dbgetUnusedTicket.rawQuery(selectQuery,null);
         if(cursor != null){
             if (cursor.moveToFirst()) {
+                do {
+                    Ticket ticket = new Ticket();
+                    ticket.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                    ticket.setTerminal_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_TERMINAL_ID)));
+                    ticket.setRoute_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_ROUTE_ID)));
+                    ticket.setTicket_id(cursor.getLong(cursor.getColumnIndex(KEY_TICKET_ID)));
+                    ticket.setScode(cursor.getString(cursor.getColumnIndex(KEY_TICKET_SCODE)));
+                    ticket.setSerial_no(cursor.getString(cursor.getColumnIndex(KEY_TICKET_SERIAL_NO)));
+                    ticket.setBatch_code(cursor.getString(cursor.getColumnIndex(KEY_TICKET_BATCH_CODE)));
+                    ticket.setTicket_type(cursor.getString(cursor.getColumnIndex(KEY_TICKET_TICKET_TYPE)));
+                    ticket.setAmount(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_AMOUNT)));
+                    ticket.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_STATUS)));
+
+                    ticketList.add(ticket);
+                } while (cursor.moveToNext());
+            }
+        }
+        cursor.close();
+        dbgetUnusedTicket.close();
+        return ticketList;
+    }
+
+    public Ticket getUnusedTicket(){
+        Ticket ticket = new Ticket();
+        SQLiteDatabase dbgetUnusedTicket = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM "+TABLE_TICKET+" WHERE "+KEY_TICKET_STATUS+ "= 0";
+        Cursor cursor = dbgetUnusedTicket.rawQuery(selectQuery,null);
+        if(cursor != null){
+            if (cursor.moveToFirst()) {
+
                 ticket.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
                 ticket.setTerminal_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_TERMINAL_ID)));
                 ticket.setRoute_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_ROUTE_ID)));
-                ticket.setTicket_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_ID)));
+                ticket.setTicket_id(cursor.getLong(cursor.getColumnIndex(KEY_TICKET_ID)));
                 ticket.setScode(cursor.getString(cursor.getColumnIndex(KEY_TICKET_SCODE)));
                 ticket.setSerial_no(cursor.getString(cursor.getColumnIndex(KEY_TICKET_SERIAL_NO)));
                 ticket.setBatch_code(cursor.getString(cursor.getColumnIndex(KEY_TICKET_BATCH_CODE)));
                 ticket.setTicket_type(cursor.getString(cursor.getColumnIndex(KEY_TICKET_TICKET_TYPE)));
                 ticket.setAmount(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_AMOUNT)));
                 ticket.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_STATUS)));
+
             }
         }
         cursor.close();
@@ -972,7 +1003,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ticket.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
                 ticket.setTerminal_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_TERMINAL_ID)));
                 ticket.setRoute_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_ROUTE_ID)));
-                ticket.setTicket_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_ID)));
+                ticket.setTicket_id(cursor.getLong(cursor.getColumnIndex(KEY_TICKET_ID)));
                 ticket.setScode(cursor.getString(cursor.getColumnIndex(KEY_TICKET_SCODE)));
                 ticket.setSerial_no(cursor.getString(cursor.getColumnIndex(KEY_TICKET_SERIAL_NO)));
                 ticket.setBatch_code(cursor.getString(cursor.getColumnIndex(KEY_TICKET_BATCH_CODE)));

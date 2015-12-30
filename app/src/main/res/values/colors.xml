@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
 
     <item name="blue" type="color">#FF33B5E5</item>
@@ -11,18 +11,27 @@
     <item name="darkgreen" type="color">#FF669900</item>
     <item name="darkorange" type="color">#FFFF8800</item>
     <item name="darkred" type="color">#FFCC0000</item>
+    <item name="white" type="color">#FFFFFFFF</item>grey_text_color
+    <item name="grey" type="color">#C3C3C3C3</item>
+    <item name="grey_text_color" type="color">#C3C3C3C3</item>
 
     <integer-array name="androidcolors">
         <item>@color/blue</item>
         <item>@color/purple</item>
         <item>@color/green</item>
         <item>@color/orange</item>
+        <item>@color/white</item>
         <item>@color/red</item>
         <item>@color/darkblue</item>
         <item>@color/darkpurple</item>
         <item>@color/darkgreen</item>
         <item>@color/darkorange</item>
         <item>@color/darkred</item>
+        <item>@color/grey</item>
+        <item>@color/grey_text_color</item>
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
     </integer-array>
-
+            <color name="ColorPrimary">#FF5722</color>
+            <color name="ColorPrimaryDark">#E64A19</color>
 </resources>

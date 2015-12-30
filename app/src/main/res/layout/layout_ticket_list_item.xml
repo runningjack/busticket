@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    >
+    android:padding="10dp">
 
     <ImageView
         android:id="@+id/imageView1"
@@ -9,25 +9,37 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/money220" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/tvTicketNumberListItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="23dp"
         android:layout_marginTop="10dp"
+        android:textStyle="bold"
+        android:typeface="sans"
         android:layout_toRightOf="@+id/imageView1"
         android:text="CodeLearn Chapter 1"
-        android:textSize="16sp" />
+         />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tvTicketDateListItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/imageView1"
-        android:layout_alignLeft="@+id/textView1"
-        android:text="Description" />
+        android:layout_alignLeft="@+id/tvTicketNumberListItem"
+        android:text="Description"
+        android:paddingBottom="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/tvTicketStatusListItem"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

@@ -6,7 +6,7 @@ package com.busticket.amedora.busticket.model;
 
 public class Ticketing {
     public int id;
-    public int ticketing_id;
+    public long ticketing_id;
     public String tripe;
     public String board_stage;
     public String highlight_stage;
@@ -27,7 +27,7 @@ public class Ticketing {
 
     public void setId(int id){this.id = id;}
 
-    public void setTicketing_id(int ticketing_id) {
+    public void setTicketing_id(long ticketing_id) {
         this.ticketing_id = ticketing_id;
     }
 
@@ -50,7 +50,7 @@ public class Ticketing {
 
     public int getId(){return this.id;}
 
-    public int getTicketing_id() {
+    public long getTicketing_id() {
         return ticketing_id;
     }
 

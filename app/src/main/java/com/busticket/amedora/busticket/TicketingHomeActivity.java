@@ -504,6 +504,15 @@ public class TicketingHomeActivity extends AppCompatActivity {
             return true;
         }
 
+        switch (item.getItemId()) {
+            case R.id.action_tickets:
+               Intent intent = new Intent(TicketingHomeActivity.this,TicketListActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_ticketing:
+                break;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

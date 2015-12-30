@@ -15,8 +15,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -88,9 +91,13 @@ public class GenerateTicketActivity extends AppCompatActivity {
     BluetoothDevice con_dev = null;
     private static final int REQUEST_CONNECT_DEVICE = 1;
     Apps apps;
+    Toolbar myToolbar;
     protected void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.layout_ticket_preview);
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
         Bundle bundle = getIntent().getExtras();
         board 		= bundle.getString("Board");
         highlight 		= bundle.getString("Highlight");
@@ -104,14 +111,20 @@ public class GenerateTicketActivity extends AppCompatActivity {
 
         tvPreview  = (TextView) findViewById(R.id.tvPreview);
         imgV = (ImageView)findViewById(R.id.imgView);
-        msg=    "Ticket ID:     "+ ticket.getTicket_id()+"\n\n"
-                +"Boarding:     "+ boardStage.getShort_name() +"\n\n"
-                +"Alighting:    "+ highlightStage.getShort_name()+ "\n\n"
-                +"Amount:       "+ "SLL "+ticket.getAmount()+"\n\n"
-                +"Bus No:       "+ bus +"\n\n"
-                +"Driver: "+busBoarded.getDriver()+"   Agent: "+busBoarded.getConductor() +"\n\n"
-                +"Serial No:    "+ ticket.getSerial_no() +"\n\n"
-                +"Code:         "+ ticket.getScode().toUpperCase()+"\n\n";
+        if(ticket.isValid()){
+            msg=    "Ticket ID:     "+ ticket.getTicket_id()+"\n\n"
+                    +"Boarding:     "+ boardStage.getShort_name() +"\n\n"
+                    +"Alighting:    "+ highlightStage.getShort_name()+ "\n\n"
+                    +"Amount:       "+ "SLL "+ticket.getAmount()+"\n\n"
+                    +"Bus No:       "+ bus +"\n\n"
+                    +"Driver: "+busBoarded.getDriver()+"   Agent: "+busBoarded.getConductor() +"\n\n"
+                    +"Serial No:    "+ ticket.getSerial_no() +"\n\n"
+                    +"Code:         "+ ticket.getScode().toUpperCase()+"\n\n";
+        }else{
+            msg ="Please load your account \r\n";
+            msg +="there is no ticket in your account";
+        }
+
 
         tvPreview.setText(msg);
 
@@ -382,7 +395,7 @@ public class GenerateTicketActivity extends AppCompatActivity {
             if(db.createTicketing(ticketing) >0){
                 String url ="http://41.77.173.124:81/busticketAPI/ticketing/create/";
                 HashMap<String, String> params = new HashMap<String, String>();
-                String ticket_id = Integer.toString(ticket.getTicket_id());
+                String ticket_id = Long.toString(ticket.getTicket_id());
                 params.put("ticket_id",ticket_id);
                 params.put("serial_no",ticket.getSerial_no());
                 params.put("trip",trip);
@@ -453,7 +466,7 @@ public class GenerateTicketActivity extends AppCompatActivity {
         qrCode[1] = (byte) 0x3a;
         qrCode[2] = (byte) 0x10;
         qrCode[3] = (byte) 0x00;
-        String ticketingData = Integer.toString(ticket.getTicket_id());//+"@"+ticket.getScode()
+        String ticketingData = Long.toString(ticket.getTicket_id());//+"@"+ticket.getScode()
         for (char ch : ticketingData.toCharArray()) {
             qrCode[k] = (byte) (int) ch;
             k++;
@@ -495,6 +508,37 @@ public class GenerateTicketActivity extends AppCompatActivity {
             }
         });
         kQueue.add(uAccount);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        switch (item.getItemId()) {
+            case R.id.action_tickets:
+                Intent intent = new Intent(GenerateTicketActivity.this,TicketListActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_ticketing:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }
