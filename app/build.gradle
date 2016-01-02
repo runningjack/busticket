@@ -6,19 +6,19 @@ android {
 
     /*signingConfigs{
         release{
-            keyAlias "busticket"
+            keyAlias "busticketsrl"
             keyPassword "medimedi2012"
-            storeFile file("C:\\Users\\Amedora\\Desktop\\busticketapk\\busticket.jks")
+            storeFile file("C:\\Users\\USER\\apksigned\\bus.jks")
             storePassword "medimedi2012"
         }
     }*/
 
     defaultConfig {
-        applicationId "com.busticket.amedora.busticket"
+        applicationId "com.busticket.amedora.busticketsrl"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
         //signingConfigs.release
 
     }
@@ -46,8 +46,7 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.embarkmobile:zxing-android-minimal:2.0.0@aar'
     compile 'com.embarkmobile:zxing-android-integration:2.0.0@aar'
+    compile 'de.hdodenhof:circleimageview:1.2.1'
+    compile 'com.android.support:recyclerview-v7:22.0.+'
     /*compile 'com.google.zxing:core:3.0.1'*/
-
-
-
 }

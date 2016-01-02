@@ -66,28 +66,5 @@
         android:layout_height="match_parent"
         android:id="@+id/lvTicket" />
 
-    <LinearLayout
-        style="@android:style/ButtonBar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:onClick="onSyncClick"
-            android:text="@string/str_ticket_list_sync"
-            android:id="@+id/btnSyncTicket" />
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:onClick="onRefreshClick"
-            android:text="@string/str_ticket_list_refresh"
-            android:id="@+id/btnRefreshTicket" />
-    </LinearLayout>
 </LinearLayout>
