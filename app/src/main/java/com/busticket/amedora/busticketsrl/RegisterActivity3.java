@@ -73,7 +73,7 @@ public class RegisterActivity3 extends Activity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog = ProgressDialog.show(RegisterActivity3.this, "","Creating your merchant account. Please wait...", true);
+                dialog = ProgressDialog.show(RegisterActivity3.this, "","Creating your ticketer account. Please wait...", true);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {

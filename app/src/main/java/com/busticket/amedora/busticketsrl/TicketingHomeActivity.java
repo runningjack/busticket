@@ -87,9 +87,9 @@ public class TicketingHomeActivity extends AppCompatActivity {
     //Similarly we Create a String Resource for the name and email in the header view
     //And we also create a int resource for profile picture in the header view
 
-    String NAME = "Akash Bangad";
-    String EMAIL = "akash.bangad@android4devs.com";
-    int PROFILE = R.drawable.btn_help;
+    String NAME = "Ahmed Seraphim";
+    String EMAIL = "amedora09@gmail.com";
+    int PROFILE = R.drawable.ahmed;
 
     private Toolbar toolbar;                              // Declaring the Toolbar Object
 
@@ -378,13 +378,14 @@ public class TicketingHomeActivity extends AppCompatActivity {
                 //pDialog.hide();
             }
         });
+        int socketTimeout = 30000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsonArrayRequest.setRetryPolicy(policy);
         mQueue.add(jsonArrayRequest);
     }
 
     private void insertBuses(){
         //RequestQueue requestQueue = new RequestQueue(m)
-
-
         String url ="http://41.77.173.124:81/busticketAPI/buses/index";
         JsonArrayRequest jsonArrayRequestBus = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
@@ -420,7 +421,7 @@ public class TicketingHomeActivity extends AppCompatActivity {
 
                 }catch (Exception e){
                     VolleyLog.d(TAG, "Error: " + e.getMessage());
-                    Toast.makeText(TicketingHomeActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TicketingHomeActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
@@ -433,6 +434,9 @@ public class TicketingHomeActivity extends AppCompatActivity {
                 //pDialog.hide();
             }
         });
+        int socketTimeout = 10000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsonArrayRequestBus.setRetryPolicy(policy);
         mQueue.add(jsonArrayRequestBus);
     }
 
@@ -445,30 +449,36 @@ public class TicketingHomeActivity extends AppCompatActivity {
                     VolleyLog.d(TAG, "MSG: Beginning Ticket Synchronization " );
                     Toast.makeText(TicketingHomeActivity.this, " Beginning Ticket Synchronization", Toast.LENGTH_SHORT).show();
                     int ja = response.length();
+                    if(ja >1){
+                        for(int w=0; w<ja; w++){
+                            // String key = iter.next();
+                            JSONObject jsonObject = (JSONObject) response.get(w);
+                            DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+                            Ticket t = db.getTicketBySerialNo(jsonObject.getString("serial_no"));
+                            if(!db.ifExists(t)){
+                                Ticket ticket = new Ticket();
+                                ticket.setTicket_id(jsonObject.getInt("id"));
+                                ticket.setSerial_no(jsonObject.getString("serial_no"));
+                                ticket.setBatch_code(jsonObject.getString("stack_id"));
+                                ticket.setRoute_id(jsonObject.getInt("route_id"));
+                                ticket.setStatus(jsonObject.getInt("status"));
+                                ticket.setAmount(jsonObject.getDouble("amount"));
+                                ticket.setScode(jsonObject.getString("code"));
+                                ticket.setTerminal_id(jsonObject.getInt("terminal_id"));
+                                ticket.setTicket_type(jsonObject.getString("ticket_type"));
+                                long u = db.createTicket(ticket);
+                                String numberAsString = new Double(u).toString();
+                                String counte = new Double(w).toString();
+                                Toast.makeText(TicketingHomeActivity.this,numberAsString+", "+counte, Toast.LENGTH_SHORT).show();
+                            }
 
-                    for(int w=0; w<ja; w++){
-                       // String key = iter.next();
-                        JSONObject jsonObject = (JSONObject) response.get(w);
-                        DatabaseHelper db = new DatabaseHelper(getApplicationContext());
-                        Ticket t = db.getTicketBySerialNo(jsonObject.getString("serial_no"));
-                        if(!db.ifExists(t)){
-                            Ticket ticket = new Ticket();
-                            ticket.setTicket_id(jsonObject.getInt("id"));
-                            ticket.setSerial_no(jsonObject.getString("serial_no"));
-                            ticket.setBatch_code(jsonObject.getString("stack_id"));
-                            ticket.setRoute_id(jsonObject.getInt("route_id"));
-                            ticket.setStatus(jsonObject.getInt("status"));
-                            ticket.setAmount(jsonObject.getDouble("amount"));
-                            ticket.setScode(jsonObject.getString("code"));
-                            ticket.setTerminal_id(jsonObject.getInt("terminal_id"));
-                            ticket.setTicket_type(jsonObject.getString("ticket_type"));
-                            long u = db.createTicket(ticket);
-                            String numberAsString = new Double(u).toString();
-                            String counte = new Double(w).toString();
-                            Toast.makeText(TicketingHomeActivity.this,numberAsString+", "+counte, Toast.LENGTH_SHORT).show();
                         }
-
+                    }else{
+                        String gg  ="Please load your account \r\n" ;
+                                gg +="there is no ticket in your account";
+                        Toast.makeText(TicketingHomeActivity.this,gg, Toast.LENGTH_SHORT).show();
                     }
+
                 }catch(Exception e){
                     VolleyLog.d(TAG, "Error: " + e.getMessage());
                     Toast.makeText(TicketingHomeActivity.this, e.toString(), Toast.LENGTH_SHORT).show();

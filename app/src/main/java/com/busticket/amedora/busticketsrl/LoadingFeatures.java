@@ -58,7 +58,6 @@ public class LoadingFeatures extends Activity {
             tvLoadFeature.setVisibility(View.INVISIBLE);
         }
     }
-
     public void getTicketing(){
         Apps apps = new Apps();
         String url ="http://41.77.173.124:81/busticketAPI/ticketing/data/"+apps.getRoute_id();
@@ -114,16 +113,13 @@ public class LoadingFeatures extends Activity {
     }
     public void getRoutes(){
         String url = "http://41.77.173.124:81/busticketAPI/route/index";
-
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try{
                     // Iterator<String> iter = response.keys();
                     int ja = response.length();
-
                     for(int i=0; i<ja; i++){
-
                         //String key = iter.next();
                         JSONObject term = (JSONObject) response.get(i);
 
