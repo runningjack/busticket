@@ -42,6 +42,7 @@ public class TicketListActivity extends AppCompatActivity {
     Toolbar myToolbar;
     TextView tvTLeft;
     ListView listTicks;
+
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_ticket_list);
@@ -58,7 +59,7 @@ public class TicketListActivity extends AppCompatActivity {
 
         getTickets();
         ArrayList ticketL = getListData();
-        Toast.makeText(TicketListActivity.this,ticketL.toString(),Toast.LENGTH_LONG).show();
+
         listTicks.setAdapter(new CustomListAdapterTickets(TicketListActivity.this, ticketL));
 
         listTicks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -132,22 +133,22 @@ public class TicketListActivity extends AppCompatActivity {
                                 long u = db.createTicket(ticket);
                                 String numberAsString = new Double(u).toString();
                                 String counte = new Double(w).toString();
-                                Toast.makeText(TicketListActivity.this,numberAsString+", "+counte, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(TicketListActivity.this,numberAsString+", "+counte, Toast.LENGTH_LONG).show();
                             }
                         }
                     }else{
                         String gg  ="Please load your account \r\n" ;
                         gg +="there is no ticket in your account";
-                        Toast.makeText(TicketListActivity.this,gg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TicketListActivity.this,gg, Toast.LENGTH_LONG).show();
                     }
                 }catch(Exception e){
-                    Toast.makeText(TicketListActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TicketListActivity.this, e.toString(), Toast.LENGTH_LONG).show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(TicketListActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TicketListActivity.this, error.toString(), Toast.LENGTH_LONG).show();
             }
         });
 

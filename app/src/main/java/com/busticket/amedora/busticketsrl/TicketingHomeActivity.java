@@ -62,7 +62,8 @@ public class TicketingHomeActivity extends AppCompatActivity {
     public static String TAG_NAME, TAG_SHORT_NAME;
     ArrayList<HashMap<String, String>> terminalList, busList, TicketList;
     public static final String  TAG ="My App";
-
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
 
     public static final String AUTHORITY = "com.busticket.amedora.busticketsrl.app";
     // An account type, in the form of a domain name
@@ -81,7 +82,7 @@ public class TicketingHomeActivity extends AppCompatActivity {
 
 
     //Section for drawer
-    String TITLES[] = {"Home","Events","Mail","Shop","Travel"};
+    String TITLES[] = {"Home","Account","Ticket","Sync","Travel"};
     int ICONS[] = {R.drawable.ic_home,R.drawable.ic_event,R.drawable.ic_mail,R.drawable.ic_shop,R.drawable.ic_travel};
 
     //Similarly we Create a String Resource for the name and email in the header view
@@ -115,11 +116,15 @@ public class TicketingHomeActivity extends AppCompatActivity {
         insertBuses();
         getTickets();
         apps = db.getApp(Installation.appId(getApplicationContext()));
+        EMAIL =apps.getRoute_name();
+
         // Get the content resolver for your app
        mResolver = getContentResolver();
         /*
          * Turn on periodic syncing
          */
+
+        mTitle = mDrawerTitle = getTitle();
        ContentResolver.addPeriodicSync(CreateSyncAccount(this), AUTHORITY, Bundle.EMPTY, SYNC_INTERVAL);
 
         String[] tdata = populateTerminals();
@@ -240,6 +245,8 @@ public class TicketingHomeActivity extends AppCompatActivity {
         }; // Drawer Toggle Object Made
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+
+
 
     }
 
