@@ -89,6 +89,9 @@ public class GenerateTicketActivity extends AppCompatActivity {
         setContentView(R.layout.layout_ticket_preview);
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
         Bundle bundle = getIntent().getExtras();
         board 		= bundle.getString("Board");

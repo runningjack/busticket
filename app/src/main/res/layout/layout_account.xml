@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_repeater">
+
+    <include
+        android:id="@+id/my_toolbar"
+        layout="@layout/tool_bar"
+        ></include>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:background="@drawable/sidedrawer_navdrawer_bg">
+
+           <!-- <include layout="@layout/body_header" />-->
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="254dp"
+                android:padding="12dp"
+                android:layout_margin="12dp"
+                android:background="@color/white"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tvCashBalanceDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="38dp"
+                    android:layout_marginTop="15dp"
+                    android:textSize="18sp"
+                    android:textColor="#a2a2a2"
+                    android:text="Cash Balance"
+                    android:layout_marginRight="15dp" />
+
+                <TextView
+                    android:id="@+id/tvCashBalance"
+                    android:layout_below="@id/tvCashBalanceDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10,000.00"
+                    android:textSize="40sp"
+                    android:textColor="#434343"
+                    android:layout_marginLeft="38dp"
+                    android:layout_marginTop="20dp"
+                    android:clickable="true"/>
+
+
+
+                <TextView
+                    android:id="@+id/tvTicketBalanceDesc"
+                    android:layout_below="@id/tvCashBalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ticket Balance"
+                    android:textSize="18sp"
+                    android:textColor="#a2a2a2"
+                    android:layout_marginLeft="38dp"
+                    android:layout_marginTop="20dp"
+                    android:clickable="true"/>
+                <TextView
+                    android:id="@+id/tvTicketBalance"
+                    android:layout_below="@id/tvTicketBalanceDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1000"
+                    android:textSize="50sp"
+                    android:textColor="#434343"
+                    android:layout_marginLeft="38dp"
+                    android:layout_marginTop="20dp"
+                    android:clickable="true"/>
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+</LinearLayout>

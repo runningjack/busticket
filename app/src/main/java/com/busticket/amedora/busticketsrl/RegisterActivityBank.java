@@ -79,7 +79,7 @@ public class RegisterActivityBank extends AppCompatActivity {
 
                                 Looper.myLooper().quit();
                             }
-                        }, 2000);
+                        }, 30000);
 
                         Looper.loop();
                     }
@@ -201,17 +201,21 @@ public class RegisterActivityBank extends AppCompatActivity {
                                 startActivity(intent);
                         }else{
                             //db.deleteApps(app);
+                            dialog.cancel();
                             Toast.makeText(RegisterActivityBank.this,response.getString("msg")+app.getAgent_id(), Toast.LENGTH_SHORT).show();
                        }
                     }catch (Exception e){
+                        dialog.cancel();
                         Toast.makeText(RegisterActivityBank.this,e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    dialog.cancel();
                     VolleyLog.d("BTICKET", "Error: " + error.getMessage());
                     Toast.makeText(RegisterActivityBank.this,error.getMessage(), Toast.LENGTH_SHORT).show();
+
                 }
             });
             kQueue.add(req);

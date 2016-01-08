@@ -48,6 +48,9 @@ public class TicketListActivity extends AppCompatActivity {
         setContentView(R.layout.layout_ticket_list);
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
        // getActionBar().setDisplayHomeAsUpEnabled(true);
         hQueue = Volley.newRequestQueue(getApplicationContext());
         listTicks =(ListView)findViewById(R.id.lvTicket);

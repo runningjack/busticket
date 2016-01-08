@@ -2,9 +2,11 @@ package com.busticket.amedora.busticketsrl;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.ActionBar;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -15,8 +17,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -82,8 +86,8 @@ public class TicketingHomeActivity extends AppCompatActivity {
 
 
     //Section for drawer
-    String TITLES[] = {"Home","Account","Ticket","Sync","Travel"};
-    int ICONS[] = {R.drawable.ic_home,R.drawable.ic_event,R.drawable.ic_mail,R.drawable.ic_shop,R.drawable.ic_travel};
+    String TITLES[] = {"Home","Account","Ticket","Sync","Logout"};
+    int ICONS[] = {R.drawable.ic_home,R.drawable.ic_action_account,R.drawable.ic_ticket,R.drawable.ic_refresh,R.drawable.ic_action_logout};
 
     //Similarly we Create a String Resource for the name and email in the header view
     //And we also create a int resource for profile picture in the header view
@@ -106,6 +110,9 @@ public class TicketingHomeActivity extends AppCompatActivity {
         setContentView(R.layout.layout_ticket_home);
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         spBoard = (Spinner) findViewById(R.id.spBoard);
         spBuses = (Spinner) findViewById(R.id.spBusNo);
         spTrips = (Spinner) findViewById(R.id.spTripType);
@@ -217,38 +224,82 @@ public class TicketingHomeActivity extends AppCompatActivity {
         // And passing the titles,icons,header view name, header view email,
         // and header view profile picture
 
-        mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
+                                      // Setting the adapter to RecyclerView
+        //mRecyclerView.setLayoutManager(mLayoutManager);                 // Setting the layout Manager
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+        Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);
+               // Drawer object Assigned to the view
 
-        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
-
-        mRecyclerView.setLayoutManager(mLayoutManager);                 // Setting the layout Manager
-
-
-        Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
         mDrawerToggle = new ActionBarDrawerToggle(this,Drawer,toolbar,R.string.openDrawer,R.string.closeDrawer){
-
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
                 // open I am not going to put anything here)
+                invalidateOptionsMenu();
             }
-
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 // Code here will execute once drawer is closed
+                invalidateOptionsMenu();
             }
-
-
-
         }; // Drawer Toggle Object Made
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
 
 
+        final GestureDetector mGestureDetector = new GestureDetector(TicketingHomeActivity.this, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+        });
+
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+                View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+
+
+                if (child != null && mGestureDetector.onTouchEvent(motionEvent)) {
+                    Drawer.closeDrawers();
+                    if(recyclerView.getChildPosition(child) == 1){
+
+                    }else if(recyclerView.getChildPosition(child) == 2){
+                        Intent intent = new Intent(TicketingHomeActivity.this,AccountActivity.class);
+                        startActivity(intent);
+                    }else if(recyclerView.getChildPosition(child) == 3){
+                        Intent intent = new Intent(TicketingHomeActivity.this,TicketListActivity.class);
+                        startActivity(intent);
+                    }else if(recyclerView.getChildPosition(child) == 4){
+                        Toast.makeText(TicketingHomeActivity.this, "The Item Clicked is: " + recyclerView.getChildPosition(child), Toast.LENGTH_SHORT).show();
+                    }else if(recyclerView.getChildPosition(child) == 5){
+                        Toast.makeText(TicketingHomeActivity.this, "The Item Clicked is: " + recyclerView.getChildPosition(child), Toast.LENGTH_SHORT).show();
+                    }
+
+
+                    return true;
+
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+            }
+        });
+
 
     }
+
+
 
     public String[] populateTerminals() {
         terminalList = new ArrayList<HashMap<String, String>>();
@@ -290,11 +341,8 @@ public class TicketingHomeActivity extends AppCompatActivity {
             // used when deleting a website from sqlite
             dias[i] = String.valueOf(s.getPlate_no());
         }
-
         return dias;
     }
-
-
 
     private void sendData() {
         Intent intent = new Intent(TicketingHomeActivity.this, GenerateTicketActivity.class);
@@ -571,7 +619,6 @@ public class TicketingHomeActivity extends AppCompatActivity {
         mQueue.add(jsonObjReq);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -585,7 +632,9 @@ public class TicketingHomeActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -601,6 +650,38 @@ public class TicketingHomeActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // if nav drawer is opened, hide the action items
+        boolean drawerOpen = Drawer.isDrawerOpen(mRecyclerView);
+        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getActionBar().setTitle(mTitle);
+    }
+    /**
+     * When using the ActionBarDrawerToggle, you must call it during
+     * onPostCreate() and onConfigurationChanged()...
+     */
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
 }
