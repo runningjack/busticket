@@ -128,12 +128,15 @@ public class RegisterActivity3 extends Activity {
                             Apps app = new Apps();
                             app.setApp_id(AppID);
                             app.setAgent_id(response.getString("data"));
+                            app.setPassword(Password);
+                            app.setIs_logged_in(1);
                             app.setStatus(0);
 
                             try{
                                 if(db.createApp(app) >0){
                                     Toast.makeText(getApplicationContext(),"App Created Record Save",Toast.LENGTH_LONG).show();
                                     Intent serverIntent = new Intent(  RegisterActivity3.this,RegisterActivityBank.class);
+                                    serverIntent.putExtra("Password",Password);
                                     startActivity(serverIntent);
                                 }
 

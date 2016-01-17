@@ -73,6 +73,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_APP_TERMINAL_ID = "station_id";
     private static final String KEY_APP_BALANCE ="balance";
     private static final String KEY_APP_STATUS="status";
+    private static final String KEY_APP_PASSWORD = "password";
+    private static final String KEY_APP_IS_LOGGED_IN ="isloggedin";
 
 
     //fields for transaction
@@ -146,7 +148,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_APP = " CREATE TABLE "+TABLE_APP +"("+KEY_ID+" INTEGER PRIMARY KEY,"
             +KEY_ROUTE_ID+" INTEGER,"+KEY_APP_ID+" TEXT,"+KEY_APP_AGENT_ID+" TEXT,"+KEY_APP_TERMINAL_ID+" INTEGER,"
-            +KEY_APP_ROUTE_NAME+" TEXT,"+KEY_APP_TERMINAL_NAME+ " TEXT, "+KEY_APP_BALANCE+" REAL,"+KEY_APP_STATUS+" INTEGER DEFAULT 0, "+KEY_CREATED_AT+" DATETIME,"+KEY_UPDATED_AT+" DATETIME"+ ")";
+            +KEY_APP_ROUTE_NAME+" TEXT,"+KEY_APP_PASSWORD+" TEXT,"+KEY_APP_IS_LOGGED_IN+" INTEGER,"+KEY_APP_TERMINAL_NAME+ " TEXT, "+KEY_APP_BALANCE+" REAL,"+KEY_APP_STATUS+" INTEGER DEFAULT 0, "+KEY_CREATED_AT+" DATETIME,"+KEY_UPDATED_AT+" DATETIME"+ ")";
 
     private static final String CREATE_TABLE_BANK = " CREATE TABLE "+TABLE_BANKS + "("+KEY_ID+" INTERGET PRIMARY KEY,"
             +KEY_BANK_SHORT_NAME+ " TEXT, "+KEY_BANK +" TEXT, "+KEY_BANK_CODE+ " TEXT,"+KEY_BANK_ADDRESS+" TEXT,"
@@ -198,9 +200,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_ROUTE);
         onCreate(db);
     }
-
-
-
 
     public long createRoute(Route route){
         SQLiteDatabase dbCRoute = this.getWritableDatabase();
@@ -536,6 +535,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_APP_ROUTE_NAME,app.getRoute_name());
         values.put(KEY_APP_TERMINAL_NAME,app.getTerminal());
         values.put(KEY_APP_BALANCE,app.getBalance());
+        values.put(KEY_APP_PASSWORD,app.getPassword());
+        values.put(KEY_APP_IS_LOGGED_IN,app.getIs_logged_in());
         values.put(KEY_APP_STATUS,app.getStatus());
 
         values.put(KEY_CREATED_AT,getDateTime());
@@ -559,7 +560,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_APP_TERMINAL_NAME,app.getTerminal());
         values.put(KEY_APP_BALANCE,app.getBalance());
         values.put(KEY_APP_STATUS,app.getStatus());
-
+        values.put(KEY_APP_PASSWORD,app.getPassword());
+        values.put(KEY_APP_IS_LOGGED_IN,app.getIs_logged_in());
         values.put(KEY_CREATED_AT,getDateTime());
         values.put(KEY_UPDATED_AT,getDateTime());
         // updating row
@@ -589,6 +591,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             apps.setBalance(cursor.getDouble(cursor.getColumnIndex(KEY_APP_BALANCE)));
             apps.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_APP_STATUS)));
             apps.setCreated_at(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+            apps.setPassword(cursor.getString(cursor.getColumnIndex(KEY_APP_PASSWORD)));
+            apps.setIs_logged_in(cursor.getColumnIndex(KEY_APP_IS_LOGGED_IN));
             apps.setUpdated_at(cursor.getString(cursor.getColumnIndex(KEY_UPDATED_AT)));
         }
         cursor.close();

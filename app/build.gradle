@@ -48,5 +48,6 @@ dependencies {
     compile 'com.embarkmobile:zxing-android-integration:2.0.0@aar'
     compile 'de.hdodenhof:circleimageview:1.2.1'
     compile 'com.android.support:recyclerview-v7:22.0+'
-    /*compile 'com.google.zxing:core:3.0.1'*/
+    /*compile 'com.jakewharton:butterknife:7.0.1'
+   compile 'com.google.zxing:core:3.0.1'*/
 }

@@ -92,9 +92,9 @@ public class TicketingHomeActivity extends AppCompatActivity {
     //Similarly we Create a String Resource for the name and email in the header view
     //And we also create a int resource for profile picture in the header view
 
-    String NAME = "Ahmed Seraphim";
+    String NAME = "SLTC";
     String EMAIL = "amedora09@gmail.com";
-    int PROFILE = R.drawable.ahmed;
+    int PROFILE = R.drawable.logo;
 
     private Toolbar toolbar;                              // Declaring the Toolbar Object
 
@@ -279,6 +279,8 @@ public class TicketingHomeActivity extends AppCompatActivity {
                     }else if(recyclerView.getChildPosition(child) == 4){
                         Toast.makeText(TicketingHomeActivity.this, "The Item Clicked is: " + recyclerView.getChildPosition(child), Toast.LENGTH_SHORT).show();
                     }else if(recyclerView.getChildPosition(child) == 5){
+                        Intent intent = new Intent(TicketingHomeActivity.this,LogoutActivity.class);
+                        startActivity(intent);
                         Toast.makeText(TicketingHomeActivity.this, "The Item Clicked is: " + recyclerView.getChildPosition(child), Toast.LENGTH_SHORT).show();
                     }
 

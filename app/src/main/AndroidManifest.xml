@@ -30,6 +30,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".LogoutActivity"  />
+        <activity android:name=".LoginActivity" android:parentActivityName=".MainActivity" />
         <activity android:name="com.busticket.amedora.busticketsrl.DeviceListActivity" android:label="@string/select_device" android:theme="@android:style/Theme.Dialog"></activity>
         <activity android:name="com.busticket.amedora.busticketsrl.GenerateTicketActivity" android:label="Print Preview"
             android:parentActivityName="com.busticket.amedora.busticketsrl.TicketingHomeActivity">

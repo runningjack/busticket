@@ -49,8 +49,11 @@ public class MainActivity extends Activity {
                         }else if ((apps.getStatus() == 0)){
                             Intent intent = new Intent(MainActivity.this, LoadingFeatures.class);
                             startActivity(intent);
-                        }else if((apps.getStatus() == 1)){
+                        }else if((apps.getStatus() == 1) && apps.getIs_logged_in()==1){
                             Intent intent = new Intent(MainActivity.this, TicketingHomeActivity.class);
+                            startActivity(intent);
+                        }else if((apps.getStatus() == 1) && apps.getIs_logged_in()==0){
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             startActivity(intent);
                         }
                     }
@@ -64,6 +67,14 @@ public class MainActivity extends Activity {
 
         btnLogin = (Button)findViewById(R.id.btnstartlogin);
         btnRgister = (Button)findViewById(R.id.btnstartregister);
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
 
         btnRgister.setOnClickListener(new View.OnClickListener() {
             @Override

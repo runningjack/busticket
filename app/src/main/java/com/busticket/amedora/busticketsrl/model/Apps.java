@@ -15,6 +15,8 @@ public class Apps {
     int terminal_id;
     String terminal;
     String agent_id;
+    String password;
+    int is_logged_in;
 
     public Apps(){}
     public Apps(String app_id, int status){
@@ -61,6 +63,14 @@ public class Apps {
         return agent_id;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public int getIs_logged_in() {
+        return is_logged_in;
+    }
+
     public void setId(int id){
         this.id = id;
     }
@@ -97,5 +107,13 @@ public class Apps {
 
     public void setAgent_id(String agent_id) {
         this.agent_id = agent_id;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setIs_logged_in(int is_logged_in) {
+        this.is_logged_in = is_logged_in;
     }
 }

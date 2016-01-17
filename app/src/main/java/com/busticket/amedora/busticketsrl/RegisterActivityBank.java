@@ -46,6 +46,7 @@ public class RegisterActivityBank extends AppCompatActivity {
     ProgressDialog dialog  =null;
     public static String TAG_BANK_NAME,TAG_SHORT_NAME;
     DatabaseHelper db = new DatabaseHelper(this);
+    String Password;
     ArrayList<HashMap<String, String>> bankList;
     ArrayList<HashMap<String,String>> routeList;
     protected void onCreate(Bundle savedInstanceBundle){
@@ -55,6 +56,7 @@ public class RegisterActivityBank extends AppCompatActivity {
         spStation =(Spinner) findViewById(R.id.spRegScreenStation);
 
         Bundle bundle = getIntent().getExtras();
+        Password = bundle.getString("Password");
         kQueue= Volley.newRequestQueue(getApplicationContext());
 
         btnNext = (Button)findViewById(R.id.btnNextBank);
@@ -187,6 +189,7 @@ public class RegisterActivityBank extends AppCompatActivity {
             params.put("merchant_id",app.getAgent_id());
             params.put("app_id",Installation.appId(getApplicationContext()));
             params.put("station_id",Integer.toString(terminal.getTerminal_id()));
+            params.put("password",Password);
             params.put("station_name",terminal.getShort_name());
 
             JsonObjectRequest req = new JsonObjectRequest(url, new JSONObject(params), new Response.Listener<JSONObject>() {
