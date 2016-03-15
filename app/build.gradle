@@ -1,17 +1,19 @@
-apply plugin: 'com.android.application'
+import org.apache.tools.ant.taskdefs.condition.Os
 
+apply plugin: 'com.android.application'
+//import org.apache.tools.ant.taskdefs.condition.Os
 android {
     compileSdkVersion 22
     buildToolsVersion "21.1.2"
 
-    /*signingConfigs{
-        release{
+    signingConfigs {
+        release {
             keyAlias "busticketsrl"
             keyPassword "medimedi2012"
             storeFile file("C:\\Users\\USER\\apksigned\\bus.jks")
             storePassword "medimedi2012"
         }
-    }*/
+    }
 
     defaultConfig {
         applicationId "com.busticket.amedora.busticketsrl"
@@ -28,8 +30,63 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    //sourceSets.main {
+    //jniLibs.srcDir 'src/main/libs'
+    //jniLibs.srcDir new File(buildDir, 'libs')
+    //jni.srcDirs = [] //disable automatic ndk-build call
+    //}
+
+
+
+
+sourceSets.main {
+    jni.srcDirs = [] // This prevents the auto generation of Android.mk
+    jniLibs.srcDir 'src/main/libs'
+
+    //manifest.srcFile 'src/main/AndroidManifest.xml'
+    //java.srcDir 'src'
+    //res.srcDir 'res'
+    //assets.srcDir 'assets'
+
+    //jniLibs.srcDir 'src/main/libs'
+    //jni.srcDirs = ['src/main/jni']      // location of native code files
+    //jniLibs.srcDirs = ['jniLibs']
+    // This is not necessary unless you have precompiled libraries in your project.
 }
 
+task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
+    /*def ndkDir = android.ndkDirectory
+    commandLine 'C:\\android-ndk-r10e\\ndk-build',
+            '-C', file('src/main/jni').absolutePath, // Change src/main/jni the relative path to your jni source
+            '-j', Runtime.runtime.availableProcessors(),
+            'all',
+            'NDK_DEBUG=1'*/
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'cmd', 'ndk-build.cmd', '-C', file('src/main/jni').absolutePath
+    } else {
+        commandLine 'ndk-build', '-C', file('src/main/jni').absolutePath
+    }
+}
+
+task cleanNative(type: Exec, description: 'Clean JNI object files') {
+    /*def ndkDir = android.ndkDirectory
+    commandLine 'C:\\android-ndk-r10e\\ndk-build',
+            '-C', file('src/main/jni').absolutePath, // Change src/main/jni the relative path to your jni source
+            'clean'*/
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'cmd', 'ndk-build.cmd', '-C', file('src/main/jni').absolutePath
+    } else {
+        commandLine 'ndk-build', '-C', file('src/main/jni').absolutePath
+    }
+}
+
+clean.dependsOn 'cleanNative'
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn buildNative
+}
 
 repositories {
     mavenCentral()
@@ -40,14 +97,19 @@ repositories {
 
 }
 
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:design:22.2.0'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.embarkmobile:zxing-android-minimal:2.0.0@aar'
     compile 'com.embarkmobile:zxing-android-integration:2.0.0@aar'
     compile 'de.hdodenhof:circleimageview:1.2.1'
     compile 'com.android.support:recyclerview-v7:22.0+'
+    testCompile 'junit:junit:4.12'
     /*compile 'com.jakewharton:butterknife:7.0.1'
    compile 'com.google.zxing:core:3.0.1'*/
 }
+

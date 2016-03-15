@@ -7,4 +7,5 @@
     <dimen name="dim_edt_height">35sp</dimen>
     <dimen name="dim_edt_font_size">20sp</dimen>
     <dimen name="dim_margin_top_20dp" >20dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

@@ -58,7 +58,7 @@ public class RegisterActivity2 extends Activity {
             @Override
             public void onClick(View v) {
 
-                if(checkValidation ()){
+                if(checkValidation()){
                     sendData();
                 }else{
                     Toast.makeText(getApplicationContext(),

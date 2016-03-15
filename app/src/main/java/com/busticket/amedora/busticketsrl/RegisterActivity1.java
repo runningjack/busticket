@@ -96,7 +96,7 @@ public class RegisterActivity1 extends Activity {
     }
 
     public void getRoutes(){
-        String url = "http://41.77.173.124:81/busticketAPI/route/index";
+        String url = "http://41.77.173.124:81/srltcapi/public/route/index";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
@@ -138,7 +138,7 @@ public class RegisterActivity1 extends Activity {
         //RequestQueue requestQueue = new RequestQueue(m)
 
         //mQueue = Volley.newRequestQueue(getApplicationContext());
-        String url ="http://41.77.173.124:81/busticketAPI/terminals/index";
+        String url ="http://41.77.173.124:81/srltcapi/public/terminals/index";
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {

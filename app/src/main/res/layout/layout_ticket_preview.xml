@@ -56,6 +56,10 @@
         </Button>
 
 
+
+
+
+
     </LinearLayout>
 
     <ImageView
@@ -64,5 +68,13 @@
         android:id="@+id/imgView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+
+
+
+
+
 </RelativeLayout>
-</ScrollView></LinearLayout>
+</ScrollView>
+
+</LinearLayout>

@@ -21,6 +21,21 @@ public class Ticket {
 
     }
 
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("{\"id\":\""+this.getTicket_id()+"\",")
+                .append("\"code\":\"" + this.getScode() + "\",")
+                .append("\"serial_no\":\""+this.getSerial_no()+"\",")
+                .append("\"terminal_id\":\""+this.getTerminal_id()+"\",")
+                .append("\"route_id\":\""+this.getRoute_id()+"\",")
+                .append("\"ticket_type\":\""+this.getTicket_type()+"\",")
+                .append("\"amount\":\"" + this.getAmount() + "\",")
+                .append("\"status\":\"" + this.getStatus() + "\",")
+                .append("\"stack_id\":\"" + this.getBatch_code() + "\"")
+                .append("}").toString();
+    }
+
     public boolean isValid() {
         return batch_code != null && serial_no != null && scode != null;
     }

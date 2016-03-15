@@ -15,7 +15,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.util.Log;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -182,26 +183,34 @@ public class RegisterActivityBank extends AppCompatActivity {
         app.setStatus(1);
 
         if(true){
-            String url ="http://41.77.173.124:81/busticketAPI/account/create/";
+            String url ="http://41.77.173.124:81/srltcapi/public/account/create";
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("route_id",Integer.toString(route.getRoute_id()));
+            params.put("route_id", Integer.toString(route.getRoute_id()));
             params.put("route_name",route.getShort_name());
             params.put("merchant_id",app.getAgent_id());
-            params.put("app_id",Installation.appId(getApplicationContext()));
+            params.put("app_id", Installation.appId(getApplicationContext()));
             params.put("station_id",Integer.toString(terminal.getTerminal_id()));
             params.put("password",Password);
             params.put("station_name",terminal.getShort_name());
-
-            JsonObjectRequest req = new JsonObjectRequest(url, new JSONObject(params), new Response.Listener<JSONObject>() {
+            params.put("status",Integer.toString(app.getStatus()));
+            JSONObject json = new JSONObject(params);
+            Log.d("JSON M", json.toString());
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,url,json, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try{
                         if(Boolean.parseBoolean(response.getString("success")) == true){
                             Toast.makeText(RegisterActivityBank.this,response.getString("msg"), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(RegisterActivityBank.this,TicketingHomeActivity.class);
-                            app.setStatus(1);
-                            if(db.updateApp(app)>0)
+
+                            app.setStatus(1); //set application satus to active
+                            app.setAgent_code(response.getString("agentCode"));
+                            if(db.updateApp(app)>0){
+                                Intent intent = new Intent(RegisterActivityBank.this,TicketingHomeActivity.class);
                                 startActivity(intent);
+                            }else {
+                                Toast.makeText(RegisterActivityBank.this,"APp could not be sett", Toast.LENGTH_SHORT).show();
+                            }
+
                         }else{
                             //db.deleteApps(app);
                             dialog.cancel();
@@ -215,7 +224,8 @@ public class RegisterActivityBank extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    dialog.cancel();
+
+//                    Log.d("BTICKET",error.getMessage());
                     VolleyLog.d("BTICKET", "Error: " + error.getMessage());
                     Toast.makeText(RegisterActivityBank.this,error.getMessage(), Toast.LENGTH_SHORT).show();
 
@@ -223,6 +233,7 @@ public class RegisterActivityBank extends AppCompatActivity {
             });
             kQueue.add(req);
         }
+        dialog.cancel();
     }
 
     private boolean checkValidation() {

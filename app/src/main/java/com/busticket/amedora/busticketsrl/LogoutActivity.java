@@ -42,7 +42,7 @@ public class LogoutActivity extends AppCompatActivity {
     }
 
     public void serverLogout(){
-        String url = "http://41.77.173.124:81/busticketAPI/account/logout/"+Installation.appId(this);
+        String url = "http://41.77.173.124:81/srltcapi/public/account/logout/"+Installation.appId(this);
         StringRequest strUpdateAccount = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

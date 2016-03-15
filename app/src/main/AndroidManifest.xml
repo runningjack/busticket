@@ -10,10 +10,12 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -31,7 +33,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".LogoutActivity"  />
+        <activity android:name=".LogoutActivityDriver"  />
+        <activity android:name=".RegisterDriverActivity"  />
+        <activity android:name=".RegisterDriverActivity2"  />
+        <activity android:name=".LoginDriverActivity"  />
         <activity android:name=".LoginActivity" android:parentActivityName=".MainActivity" />
+        <activity android:name=".TripHomeActivity"  />
+        <activity android:name=".TestPrintActivity" android:parentActivityName=".TicketingHomeActivity"/>
+
+        <activity android:name=".TripDayCloseActivity"/>
         <activity android:name="com.busticket.amedora.busticketsrl.DeviceListActivity" android:label="@string/select_device" android:theme="@android:style/Theme.Dialog"></activity>
         <activity android:name="com.busticket.amedora.busticketsrl.GenerateTicketActivity" android:label="Print Preview"
             android:parentActivityName="com.busticket.amedora.busticketsrl.TicketingHomeActivity">

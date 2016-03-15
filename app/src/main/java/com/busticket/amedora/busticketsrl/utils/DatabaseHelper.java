@@ -15,6 +15,7 @@ import com.busticket.amedora.busticketsrl.model.Terminal;
 import com.busticket.amedora.busticketsrl.model.Ticket;
 import com.busticket.amedora.busticketsrl.model.Ticketing;
 import com.busticket.amedora.busticketsrl.model.Transaction;
+import com.busticket.amedora.busticketsrl.model.Trip;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_TERMINALS     = "terminals";
     private static final String TABLE_BUSES         = "buses";
     private static final String TABLE_ROUTE         = "route";
+    private static final String TABLE_TRIP          = "trip";
 
     //Generic Fields
     private static final String KEY_ID = "id";
@@ -75,6 +77,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_APP_STATUS="status";
     private static final String KEY_APP_PASSWORD = "password";
     private static final String KEY_APP_IS_LOGGED_IN ="isloggedin";
+    private static final String KEY_AGENT_CODE = "agent_code";
+    private static final String KEY_APP_LICENCE_ID ="licence_no";
+    private static final String KEY_APP_BUS_ID ="bus_id";
+    private static final String KEY_APP_SCHEDULE_ID ="schedule_id";
+    private static final String KEY_APP_DRIVER_LNAME = "driver_lname";
+    private static final String KEY_APP_DRIVER_FNAME = "driver_fname";
+    private static final String KEY_APP_DRIVER_ID ="driver_id";
+    private static final String KEY_APP_TRIPS ="trip_count";
+    private static final String KEY_APP_DRIVER_LOGGED_IN = "isloggedindriver";
+    private static final String KEY_APP_DRIVER_PASSWORD = "driver_password";
+    private static final String KEY_APP_MODE ="app_mode";
+
 
 
     //fields for transaction
@@ -136,6 +150,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_BUSES_BUS_PLATE_NO = "plate_no";
     private static final String KEY_BUSES_BUS_DRIVER = "driver";
     private static final String KEY_BUSES_CONDUCTOR = "conductor";
+    //Fields for trip
+    private static final String KEY_TRIP_ID = "trip_id";
+    private static final String KEY_TRIP_DRIVER_ID = "driver_id";
+    private static final String KEY_TRIP_FULLNAME = "fullname";
+    private static final String KEY_TRIP_DEST_FROM ="dest_from";
+    private static final String KEY_TRIP_DEST_TO ="dest_to";
+    private static final String KEY_TRIP_START_TIME ="start_time";
+    private static final String KEY_TRIP_END_TIME ="end_time";
+    private static final String KEY_TRIP_TOTAL_HRS ="total_hrs";
+    private static final String KEY_TRIP_SPEEDO_START ="speedo_start";
+    private static final String KEY_TRIP_SPEEDO_STOP ="speedo_stop";
+    private static final String KEY_TRIP_FUEL_LEVEL ="fuel_level";
+    private static final String KEY_TRIP_OIL_LEVEL ="oil_level";
+    private static final String KEY_TRIP_FLUID_LEVEL ="fluid_level";
+    private static final String KEY_TRIP_BUS_ID ="bus_id";
+    private static final String KEY_TRIP_PASSENGER = "passenger";
+    private static final String KEY_TRIP_REMARK = "remark";
+    private static final String KEY_TRIP_DATE ="trip_date";
+    private static final String KEY_TRIP_SERVICE_ID = "service_id";
+    private static final String KEY_TRIP_SCHEDULE_ID = "schedule_id";
+    private static final String KEY_TRIP_SERVICE_NAME = "service_name";
+    private static final String KEY_TRIP_VIEW = "view";
+    private static final String KEY_TRIP_COUNT ="trip_count";
+
+
+    private static final String  CREATE_TABLE_TRIP = " CREATE TABLE "+ TABLE_TRIP +"("+KEY_ID+" INTEGER PRIMARY KEY,"+KEY_TRIP_ID+" TEXT,"
+            +KEY_TRIP_FULLNAME+" TEXT,"+ KEY_TRIP_DEST_FROM+" TEXT,"+KEY_TRIP_DEST_TO+" TEXT,"+ KEY_TRIP_START_TIME+" TEXT,"+KEY_TRIP_END_TIME+" TEXT,"+KEY_TRIP_TOTAL_HRS+" TEXT,"
+            +KEY_TRIP_SPEEDO_START+" TEXT,"+KEY_TRIP_SPEEDO_STOP+" TEXT,"+KEY_TRIP_SCHEDULE_ID+" INTEGER,"+ KEY_ROUTE_ID+" INTEGER, "+KEY_TRIP_FUEL_LEVEL+" TEXT,"+KEY_TRIP_OIL_LEVEL+" TEXT,"+KEY_TRIP_FLUID_LEVEL+" TEXT,"+KEY_TRIP_BUS_ID+" INTEGER,"
+            +KEY_TRIP_DRIVER_ID+" INTEGER,"+KEY_TRIP_COUNT+" INTEGER DEFAULT 0,"+KEY_TRIP_PASSENGER+" INTEGER,"+KEY_TRIP_REMARK+" TEXT,"+KEY_TRIP_SERVICE_ID+" INTEGER,"+KEY_TRIP_SERVICE_NAME+" TEXT,"+KEY_TRIP_VIEW+" INTEGER,"
+            +KEY_APP_STATUS+" INTEGER DEFAULT 0, "+KEY_TRIP_DATE+" TEXT,"+KEY_CREATED_AT +" DATETIME,"+KEY_UPDATED_AT+ " DATETIME)";
+
 
     //string to create database tables
     private static final String CREATE_TABLE_ACCOUNT = " CREATE TABLE "+ TABLE_ACCOUNT +"("+KEY_ID+ " INTEGER PRIMARY KEY,"
@@ -146,9 +191,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + KEY_ROUTE_ID +" INTEGER, "+KEY_ROUTE_SHORT_NAME+" TEXT,"+KEY_ROUTE_NAME+ " TEXT, "+ KEY_ROUTE_DESCRIPTION+" TEXT,"
             +KEY_ROUTE_DISTANCE+" TEXT,"+KEY_CREATED_AT +" DATETIME,"+KEY_UPDATED_AT+ " DATETIME)";
 
+
     private static final String CREATE_TABLE_APP = " CREATE TABLE "+TABLE_APP +"("+KEY_ID+" INTEGER PRIMARY KEY,"
             +KEY_ROUTE_ID+" INTEGER,"+KEY_APP_ID+" TEXT,"+KEY_APP_AGENT_ID+" TEXT,"+KEY_APP_TERMINAL_ID+" INTEGER,"
-            +KEY_APP_ROUTE_NAME+" TEXT,"+KEY_APP_PASSWORD+" TEXT,"+KEY_APP_IS_LOGGED_IN+" INTEGER,"+KEY_APP_TERMINAL_NAME+ " TEXT, "+KEY_APP_BALANCE+" REAL,"+KEY_APP_STATUS+" INTEGER DEFAULT 0, "+KEY_CREATED_AT+" DATETIME,"+KEY_UPDATED_AT+" DATETIME"+ ")";
+            +KEY_APP_ROUTE_NAME+" TEXT,"+KEY_AGENT_CODE+" TEXT,"+KEY_APP_PASSWORD+" TEXT,"+KEY_APP_IS_LOGGED_IN+" INTEGER,"+KEY_APP_TERMINAL_NAME+ " TEXT,"
+            +KEY_APP_LICENCE_ID+" TEXT,"+KEY_APP_BUS_ID+" INTEGER,"+KEY_APP_SCHEDULE_ID+" INTEGER,"+KEY_APP_DRIVER_LNAME+" TEXT,"+KEY_APP_DRIVER_FNAME+" TEXT,"
+            +KEY_APP_DRIVER_ID+" INTEGER,"+KEY_APP_TRIPS+" INTEGER,"+KEY_APP_DRIVER_LOGGED_IN+" INTEGER DEFAULT 0,"+KEY_APP_DRIVER_PASSWORD+" TEXT,"
+            +KEY_APP_BALANCE+" REAL,"+KEY_APP_MODE+" INTEGER DEFAULT 0,"+KEY_APP_STATUS+" INTEGER DEFAULT 0, "+KEY_CREATED_AT+" DATETIME,"+KEY_UPDATED_AT+" DATETIME"+ ")";
 
     private static final String CREATE_TABLE_BANK = " CREATE TABLE "+TABLE_BANKS + "("+KEY_ID+" INTERGET PRIMARY KEY,"
             +KEY_BANK_SHORT_NAME+ " TEXT, "+KEY_BANK +" TEXT, "+KEY_BANK_CODE+ " TEXT,"+KEY_BANK_ADDRESS+" TEXT,"
@@ -186,6 +235,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TICKETING);
         db.execSQL(CREATE_TABLE_TICKET);
         db.execSQL(CREATE_TABLE_ROUTE);
+        db.execSQL(CREATE_TABLE_TRIP);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
@@ -198,7 +248,240 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_TICKET);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_TICKETING);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_ROUTE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_TRIP);
         onCreate(db);
+    }
+
+
+    public long createTrip(Trip trip){
+        SQLiteDatabase dbCTrip = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_TRIP_ID,trip.getTrip_ID());
+        values.put(KEY_TRIP_DRIVER_ID,trip.getDriverID());
+        values.put(KEY_TRIP_FULLNAME,trip.getFullname());
+        values.put(KEY_TRIP_DEST_FROM,trip.getDestFrom());
+        values.put(KEY_TRIP_DEST_TO,trip.getDestTo());
+        values.put(KEY_TRIP_START_TIME,trip.getStartTime());
+        values.put(KEY_TRIP_END_TIME,trip.getEndTime());
+        values.put(KEY_TRIP_TOTAL_HRS,trip.getTotalHrs());
+        values.put(KEY_TRIP_SPEEDO_START,trip.getSpeedoStart());
+        values.put(KEY_TRIP_SPEEDO_STOP,trip.getSpeedoEnd());
+        values.put(KEY_TRIP_FUEL_LEVEL,trip.getFuelLevel());
+        values.put(KEY_TRIP_OIL_LEVEL,trip.getOilLevel());
+        values.put(KEY_TRIP_FLUID_LEVEL,trip.getBrakeFluidLevel());
+        values.put(KEY_TRIP_BUS_ID,trip.getBusID());
+        values.put(KEY_TRIP_PASSENGER,trip.getPassenger());
+        values.put(KEY_TRIP_REMARK,trip.getRemark());
+        values.put(KEY_TRIP_SERVICE_ID,trip.getServiceID());
+        values.put(KEY_TRIP_SCHEDULE_ID,trip.getScheduleID());
+        values.put(KEY_ROUTE_ID,trip.getRouteID());
+        //values.put(KEY_TRIP_SERVICE_NAME,trip.getS);
+        values.put(KEY_TRIP_VIEW,trip.getView()) ;
+
+        values.put(KEY_APP_STATUS,trip.getStatus()) ;
+        values.put(KEY_TRIP_DATE,trip.getTripDate()) ;
+        values.put(KEY_CREATED_AT, getDateTime());
+        values.put(KEY_UPDATED_AT, getDateTime());
+        long trip_id = dbCTrip.insert(TABLE_TRIP, null, values);
+
+        dbCTrip.close();
+        return trip_id;
+    }
+
+    /**
+     * Updating an Route
+     */
+    public int updateTrip(Trip trip) {
+        SQLiteDatabase dbuTrip = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_TRIP_ID,trip.getTrip_ID());
+        values.put(KEY_TRIP_DRIVER_ID,trip.getDriverID());
+        values.put(KEY_TRIP_FULLNAME,trip.getFullname());
+        values.put(KEY_TRIP_DEST_FROM,trip.getDestFrom());
+        values.put(KEY_TRIP_DEST_TO,trip.getDestTo());
+        values.put(KEY_TRIP_START_TIME,trip.getStartTime());
+        values.put(KEY_TRIP_END_TIME,trip.getEndTime());
+        values.put(KEY_TRIP_TOTAL_HRS,trip.getTotalHrs());
+        values.put(KEY_TRIP_SPEEDO_START,trip.getSpeedoStart());
+        values.put(KEY_TRIP_SPEEDO_STOP,trip.getSpeedoEnd());
+        values.put(KEY_TRIP_FUEL_LEVEL,trip.getFuelLevel());
+        values.put(KEY_TRIP_OIL_LEVEL,trip.getOilLevel());
+        values.put(KEY_TRIP_FLUID_LEVEL,trip.getBrakeFluidLevel());
+        values.put(KEY_TRIP_BUS_ID,trip.getBusID());
+        values.put(KEY_TRIP_PASSENGER,trip.getPassenger());
+        values.put(KEY_TRIP_REMARK,trip.getRemark());
+        values.put(KEY_TRIP_SERVICE_ID,trip.getServiceID());
+        values.put(KEY_TRIP_SCHEDULE_ID,trip.getScheduleID());
+        values.put(KEY_ROUTE_ID,trip.getRouteID());
+        //values.put(KEY_TRIP_SERVICE_NAME,trip.getS);
+        values.put(KEY_TRIP_VIEW,trip.getView()) ;
+        values.put(KEY_APP_STATUS,trip.getStatus()) ;
+        values.put(KEY_TRIP_DATE,trip.getTripDate()) ;
+        values.put(KEY_UPDATED_AT, getDateTime());
+
+        int k = dbuTrip.update(TABLE_TRIP, values, KEY_TRIP_ID + " = ?",
+                new String[]{String.valueOf(trip.getTrip_ID())});
+        dbuTrip.close();
+        return k;
+    }
+
+    public void deleteTrip(Trip trip) {
+        SQLiteDatabase dbdTrip = this.getWritableDatabase();
+        dbdTrip.delete(TABLE_TRIP, KEY_ID + " = ?",
+                new String[]{String.valueOf(trip.getId())});
+        dbdTrip.close();
+    }
+
+    public List<Trip> getAllTrip() {
+        List<Trip> tripList = new ArrayList<Trip>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_TRIP;
+        SQLiteDatabase dbAllTrip = this.getWritableDatabase();
+        Cursor cursor = dbAllTrip.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+
+                Trip trip = new Trip();
+                trip.setTrip_ID(cursor.getString(cursor.getColumnIndex(KEY_TRIP_ID)));
+                trip.setDriverID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_DRIVER_ID)));
+                trip.setFullname(cursor.getString(cursor.getColumnIndex(KEY_TRIP_FULLNAME)));
+                trip.setDestFrom(cursor.getString(cursor.getColumnIndex(KEY_TRIP_DEST_FROM)));
+                trip.setDestTo(cursor.getString(cursor.getColumnIndex(KEY_TRIP_DEST_TO)));
+                trip.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_TRIP_START_TIME)));
+                trip.setEndTime(cursor.getString(cursor.getColumnIndex(KEY_TRIP_END_TIME)));
+                trip.setTotalHrs(cursor.getString(cursor.getColumnIndex(KEY_TRIP_TOTAL_HRS)));
+                trip.setSpeedoStart(cursor.getString(cursor.getColumnIndex(KEY_TRIP_SPEEDO_START)));
+                trip.setSpeedoEnd(cursor.getString(cursor.getColumnIndex(KEY_TRIP_SPEEDO_STOP)));
+                trip.setFuelLevel(cursor.getString(cursor.getColumnIndex(KEY_TRIP_FUEL_LEVEL)));
+                trip.setOilLevel(cursor.getString(cursor.getColumnIndex(KEY_TRIP_OIL_LEVEL)));
+                trip.setBrakeFluidLevel(cursor.getString(cursor.getColumnIndex(KEY_TRIP_FLUID_LEVEL)));
+                trip.setBusID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_BUS_ID)));
+                trip.setPassenger(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_PASSENGER)));
+                trip.setRemark(cursor.getString(cursor.getColumnIndex(KEY_TRIP_REMARK)));
+                trip.setServiceID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_SERVICE_ID)));
+                trip.setRouteID(cursor.getInt(cursor.getColumnIndex(KEY_ROUTE_ID)));
+                trip.setScheduleID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_SCHEDULE_ID)));
+                trip.setTripCount(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_COUNT)));
+                //cursor.getColumnIndex(KEY_TRIP_SERVICE_NAME,trip.setS);
+                trip.setTripDate(cursor.getString(cursor.getColumnIndex(KEY_TRIP_DATE)));
+                trip.setView(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_VIEW))) ;
+                trip.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_APP_STATUS))) ;
+                trip.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                trip.setUpdatedAt(cursor.getString(cursor.getColumnIndex(KEY_UPDATED_AT)));
+                //getDateTime(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+                //getDateTime(cursor.getString(cursor.getColumnIndex(KEY_UPDATED_AT)));
+
+                tripList.add(trip);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        dbAllTrip.close();
+        return tripList;
+    }
+
+    public Trip getTripByID(String tripID){
+        Trip trip = new Trip();
+        SQLiteDatabase dbgTripByName = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM "+TABLE_TRIP+" WHERE "
+                + KEY_TRIP_ID +" ='"+tripID+"'";
+        Cursor cursor = dbgTripByName.rawQuery(selectQuery,null);
+        if(cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            trip.setTrip_ID(cursor.getString(cursor.getColumnIndex(KEY_TRIP_ID)));
+            trip.setDriverID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_DRIVER_ID)));
+            trip.setFullname(cursor.getString(cursor.getColumnIndex(KEY_TRIP_FULLNAME)));
+            trip.setDestFrom(cursor.getString(cursor.getColumnIndex(KEY_TRIP_DEST_FROM)));
+            trip.setDestTo(cursor.getString(cursor.getColumnIndex(KEY_TRIP_DEST_TO)));
+            trip.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_TRIP_START_TIME)));
+            trip.setEndTime(cursor.getString(cursor.getColumnIndex(KEY_TRIP_END_TIME)));
+            trip.setTotalHrs(cursor.getString(cursor.getColumnIndex(KEY_TRIP_TOTAL_HRS)));
+            trip.setSpeedoStart(cursor.getString(cursor.getColumnIndex(KEY_TRIP_SPEEDO_START)));
+            trip.setSpeedoEnd(cursor.getString(cursor.getColumnIndex(KEY_TRIP_SPEEDO_STOP)));
+            trip.setFuelLevel(cursor.getString(cursor.getColumnIndex(KEY_TRIP_FUEL_LEVEL)));
+            trip.setOilLevel(cursor.getString(cursor.getColumnIndex(KEY_TRIP_OIL_LEVEL)));
+            trip.setBrakeFluidLevel(cursor.getString(cursor.getColumnIndex(KEY_TRIP_FLUID_LEVEL)));
+            trip.setBusID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_BUS_ID)));
+            trip.setPassenger(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_PASSENGER)));
+            trip.setRemark(cursor.getString(cursor.getColumnIndex(KEY_TRIP_REMARK)));
+            trip.setServiceID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_SERVICE_ID)));
+            trip.setRouteID(cursor.getInt(cursor.getColumnIndex(KEY_ROUTE_ID)));
+            trip.setScheduleID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_SCHEDULE_ID)));
+            trip.setTripDate(cursor.getString(cursor.getColumnIndex(KEY_TRIP_DATE)));
+            trip.setTripCount(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_COUNT)));
+            //cursor.getColumnIndex(KEY_TRIP_SERVICE_NAME,trip.setS);
+            trip.setView(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_VIEW))) ;
+            trip.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_APP_STATUS))) ;
+            trip.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+            trip.setUpdatedAt(cursor.getString(cursor.getColumnIndex(KEY_UPDATED_AT)));
+        }
+        cursor.close();
+        dbgTripByName.close();
+        return trip;
+    }
+
+    public Trip getCurrTrip(){
+        Trip trip = new Trip();
+        SQLiteDatabase dbgTripByName = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM "+TABLE_TRIP+" WHERE "
+                + KEY_APP_STATUS +" = 0";
+        Cursor cursor = dbgTripByName.rawQuery(selectQuery,null);
+        if(cursor.getCount() > 0 && cursor != null) {
+            cursor.moveToFirst();
+            trip.setTrip_ID(cursor.getString(cursor.getColumnIndex(KEY_TRIP_ID)));
+            trip.setDriverID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_DRIVER_ID)));
+            trip.setFullname(cursor.getString(cursor.getColumnIndex(KEY_TRIP_FULLNAME)));
+            trip.setDestFrom(cursor.getString(cursor.getColumnIndex(KEY_TRIP_DEST_FROM)));
+            trip.setDestTo(cursor.getString(cursor.getColumnIndex(KEY_TRIP_DEST_TO)));
+            trip.setStartTime(cursor.getString(cursor.getColumnIndex(KEY_TRIP_START_TIME)));
+            trip.setEndTime(cursor.getString(cursor.getColumnIndex(KEY_TRIP_END_TIME)));
+            trip.setTotalHrs(cursor.getString(cursor.getColumnIndex(KEY_TRIP_TOTAL_HRS)));
+            trip.setSpeedoStart(cursor.getString(cursor.getColumnIndex(KEY_TRIP_SPEEDO_START)));
+            trip.setSpeedoEnd(cursor.getString(cursor.getColumnIndex(KEY_TRIP_SPEEDO_STOP)));
+            trip.setFuelLevel(cursor.getString(cursor.getColumnIndex(KEY_TRIP_FUEL_LEVEL)));
+            trip.setOilLevel(cursor.getString(cursor.getColumnIndex(KEY_TRIP_OIL_LEVEL)));
+            trip.setBrakeFluidLevel(cursor.getString(cursor.getColumnIndex(KEY_TRIP_FLUID_LEVEL)));
+            trip.setBusID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_BUS_ID)));
+            trip.setPassenger(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_PASSENGER)));
+            trip.setRemark(cursor.getString(cursor.getColumnIndex(KEY_TRIP_REMARK)));
+            trip.setServiceID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_SERVICE_ID)));
+            trip.setRouteID(cursor.getInt(cursor.getColumnIndex(KEY_ROUTE_ID)));
+            trip.setScheduleID(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_SCHEDULE_ID)));
+            trip.setTripDate(cursor.getString(cursor.getColumnIndex(KEY_TRIP_DATE)));
+            trip.setTripCount(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_COUNT)));
+            //cursor.getColumnIndex(KEY_TRIP_SERVICE_NAME,trip.setS);
+            trip.setView(cursor.getInt(cursor.getColumnIndex(KEY_TRIP_VIEW))) ;
+            trip.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_APP_STATUS))) ;
+            trip.setCreatedAt(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
+            trip.setUpdatedAt(cursor.getString(cursor.getColumnIndex(KEY_UPDATED_AT)));
+            cursor.close();
+            dbgTripByName.close();
+            return trip;
+        }else{
+            return null;
+        }
+
+    }
+
+    public boolean ifExistsTrip(Trip trip){
+        SQLiteDatabase dbiffTrip = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM "+TABLE_TRIP+" WHERE "
+                +KEY_TRIP_ID + " ='" +trip.getTrip_ID()+"'";
+        Cursor cursor = dbiffTrip.rawQuery(selectQuery, null);
+        if(cursor.getCount() > 0) {
+            if (cursor.moveToFirst()) {
+                cursor.close();
+                dbiffTrip.close();
+                return true;
+            } else {
+                cursor.close();
+                dbiffTrip.close();
+                return false;
+            }
+        }else{
+            return false;
+        }
     }
 
     public long createRoute(Route route){
@@ -212,11 +495,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_CREATED_AT,getDateTime());
         values.put(KEY_UPDATED_AT,getDateTime());
         long acc_id = dbCRoute.insert(TABLE_ROUTE, null, values);
-
         dbCRoute.close();
         return acc_id;
     }
-
     /**
      * Updating an Route
      */
@@ -311,7 +592,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-
     public long createAccount(Account account){
         SQLiteDatabase dbcAcc = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -326,8 +606,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         dbcAcc.close();
         return acc_id;
     }
-
-
 
     /**
      * Updating an account
@@ -442,7 +720,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-
     public List<Bank> getAllBank() {
         List<Bank> bankList = new ArrayList<Bank>();
         //Select All Query
@@ -467,8 +744,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         dbgetAllBank.close();
         return bankList;
     }
-
-
 
     public boolean ifExists(Bank bank){
         SQLiteDatabase dbiffBank = this.getReadableDatabase();
@@ -520,9 +795,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return bank;
     }
 
-
-
-
     //creates application data
     public long createApp(Apps app){
         SQLiteDatabase dbcreateApp = this.getWritableDatabase();
@@ -536,8 +808,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_APP_TERMINAL_NAME,app.getTerminal());
         values.put(KEY_APP_BALANCE,app.getBalance());
         values.put(KEY_APP_PASSWORD,app.getPassword());
+        values.put(KEY_AGENT_CODE,app.getAgent_code());
         values.put(KEY_APP_IS_LOGGED_IN,app.getIs_logged_in());
         values.put(KEY_APP_STATUS,app.getStatus());
+        values.put(KEY_APP_LICENCE_ID,app.getLicenceNo());
+        values.put(KEY_APP_BUS_ID,app.getBusID());
+        values.put(KEY_APP_SCHEDULE_ID,app.getScheduleID());
+        values.put(KEY_APP_DRIVER_LNAME,app.getDriverLname());
+        values.put(KEY_APP_DRIVER_FNAME,app.getDriverFname());
+        values.put(KEY_APP_DRIVER_ID,app.getDriverID());
+        values.put(KEY_APP_TRIPS,app.getTripCount());
+        values.put(KEY_APP_MODE,app.getAppMode());
+        values.put(KEY_APP_DRIVER_LOGGED_IN,app.getDriverLoggedIn());
+        values.put(KEY_APP_DRIVER_PASSWORD,app.getDriverPassword());
+
 
         values.put(KEY_CREATED_AT,getDateTime());
         values.put(KEY_UPDATED_AT,getDateTime());
@@ -562,6 +846,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_APP_STATUS,app.getStatus());
         values.put(KEY_APP_PASSWORD,app.getPassword());
         values.put(KEY_APP_IS_LOGGED_IN,app.getIs_logged_in());
+        values.put(KEY_AGENT_CODE,app.getAgent_code());
+        values.put(KEY_APP_LICENCE_ID,app.getLicenceNo());
+        values.put(KEY_APP_BUS_ID,app.getBusID());
+        values.put(KEY_APP_SCHEDULE_ID,app.getScheduleID());
+        values.put(KEY_APP_DRIVER_LNAME,app.getDriverLname());
+        values.put(KEY_APP_DRIVER_FNAME,app.getDriverFname());
+        values.put(KEY_APP_DRIVER_ID,app.getDriverID());
+        values.put(KEY_APP_TRIPS,app.getTripCount());
+        values.put(KEY_APP_MODE,app.getAppMode());
+        values.put(KEY_APP_DRIVER_LOGGED_IN,app.getDriverLoggedIn());
+        values.put(KEY_APP_DRIVER_PASSWORD,app.getDriverPassword());
         values.put(KEY_CREATED_AT,getDateTime());
         values.put(KEY_UPDATED_AT,getDateTime());
         // updating row
@@ -579,7 +874,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String selectQuery = "SELECT * FROM "+TABLE_APP+" WHERE "
                 + KEY_APP_ID +" ='"+app_id+"'";
         Cursor cursor = dbgetApp.rawQuery(selectQuery, null);
-        if(cursor != null) {
+        if(cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             apps.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
             apps.setApp_id(cursor.getString(cursor.getColumnIndex(KEY_APP_ID)));
@@ -590,12 +885,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             apps.setTerminal(cursor.getString(cursor.getColumnIndex(KEY_APP_TERMINAL_NAME)));
             apps.setBalance(cursor.getDouble(cursor.getColumnIndex(KEY_APP_BALANCE)));
             apps.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_APP_STATUS)));
+            apps.setAgent_code(cursor.getString(cursor.getColumnIndex(KEY_AGENT_CODE)));
             apps.setCreated_at(cursor.getString(cursor.getColumnIndex(KEY_CREATED_AT)));
             apps.setPassword(cursor.getString(cursor.getColumnIndex(KEY_APP_PASSWORD)));
             apps.setIs_logged_in(cursor.getColumnIndex(KEY_APP_IS_LOGGED_IN));
+
+            apps.setLicenceNo(cursor.getString(cursor.getColumnIndex(KEY_APP_LICENCE_ID)));
+            apps.setBusID(cursor.getInt(cursor.getColumnIndex(KEY_APP_BUS_ID)));
+            apps.setScheduleID(cursor.getInt(cursor.getColumnIndex(KEY_APP_SCHEDULE_ID)));
+            apps.setDriverFname(cursor.getString(cursor.getColumnIndex(KEY_APP_DRIVER_FNAME)));
+            apps.setDriverLname(cursor.getString(cursor.getColumnIndex(KEY_APP_DRIVER_LNAME)));
+            apps.setDriverID(cursor.getInt(cursor.getColumnIndex(KEY_APP_DRIVER_ID)));
+            apps.setTripCount(cursor.getInt(cursor.getColumnIndex(KEY_APP_TRIPS)));
+
+            apps.setAppMode(cursor.getInt(cursor.getColumnIndex(KEY_APP_MODE)));
+            apps.setDriverLoggedIn(cursor.getInt(cursor.getColumnIndex(KEY_APP_DRIVER_LOGGED_IN)));
+            apps.setDriverPassword(cursor.getString(cursor.getColumnIndex(KEY_APP_DRIVER_PASSWORD)));
             apps.setUpdated_at(cursor.getString(cursor.getColumnIndex(KEY_UPDATED_AT)));
+            cursor.close();
+        }else {
+            apps = null;
         }
-        cursor.close();
+
         dbgetApp.close();
         return apps;
     }
@@ -941,10 +1252,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ticket;
     }
 
+    public ArrayList<Ticket> getIssuedTickets(){
+        ArrayList<Ticket> ticketList = new ArrayList<Ticket>();
+        SQLiteDatabase dbgetUnusedTicket = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM "+TABLE_TICKET+" WHERE "+KEY_TICKET_STATUS+ "= 1 LIMIT 100";
+        Cursor cursor = dbgetUnusedTicket.rawQuery(selectQuery,null);
+        if(cursor != null){
+            if (cursor.moveToFirst()) {
+                do {
+                    Ticket ticket = new Ticket();
+                    ticket.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                    ticket.setTerminal_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_TERMINAL_ID)));
+                    ticket.setRoute_id(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_ROUTE_ID)));
+                    ticket.setTicket_id(cursor.getLong(cursor.getColumnIndex(KEY_TICKET_ID)));
+                    ticket.setScode(cursor.getString(cursor.getColumnIndex(KEY_TICKET_SCODE)));
+                    ticket.setSerial_no(cursor.getString(cursor.getColumnIndex(KEY_TICKET_SERIAL_NO)));
+                    ticket.setBatch_code(cursor.getString(cursor.getColumnIndex(KEY_TICKET_BATCH_CODE)));
+                    ticket.setTicket_type(cursor.getString(cursor.getColumnIndex(KEY_TICKET_TICKET_TYPE)));
+                    ticket.setAmount(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_AMOUNT)));
+                    ticket.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_STATUS)));
+
+                    ticketList.add(ticket);
+                } while (cursor.moveToNext());
+            }
+        }
+        cursor.close();
+        dbgetUnusedTicket.close();
+        return ticketList;
+    }
+
     public ArrayList<Ticket> getUnusedTickets(){
         ArrayList<Ticket> ticketList = new ArrayList<Ticket>();
         SQLiteDatabase dbgetUnusedTicket = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM "+TABLE_TICKET+" WHERE "+KEY_TICKET_STATUS+ "= 0";
+        String selectQuery = "SELECT * FROM "+TABLE_TICKET+" WHERE "+KEY_TICKET_STATUS+ "= 0 LIMIT 100";
         Cursor cursor = dbgetUnusedTicket.rawQuery(selectQuery,null);
         if(cursor != null){
             if (cursor.moveToFirst()) {
@@ -973,9 +1313,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Ticket getUnusedTicket(){
         Ticket ticket = new Ticket();
         SQLiteDatabase dbgetUnusedTicket = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM "+TABLE_TICKET+" WHERE "+KEY_TICKET_STATUS+ "= 0";
+        String selectQuery = "SELECT * FROM "+TABLE_TICKET+" WHERE "+KEY_TICKET_STATUS+ "= 0 LIMIT 1";
         Cursor cursor = dbgetUnusedTicket.rawQuery(selectQuery,null);
-        if(cursor != null){
+        if(cursor.getCount()>0){
             if (cursor.moveToFirst()) {
 
                 ticket.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
@@ -990,10 +1330,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ticket.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_STATUS)));
 
             }
+
+            cursor.close();
+            dbgetUnusedTicket.close();
+            return ticket;
+
+        }else{
+            cursor.close();
+            dbgetUnusedTicket.close();
+            return null;
         }
-        cursor.close();
-        dbgetUnusedTicket.close();
-        return ticket;
+
     }
 
     public List<Ticket> getUsedTickets(){
@@ -1130,7 +1477,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_TICKETING_CONDUCTOR, ticketing.getConductor());
         values.put(KEY_TICKET_STATUS,ticketing.getStatus());
         values.put(KEY_CREATED_AT,getDateTime());
-        values.put(KEY_UPDATED_AT,getDateTime());
+        values.put(KEY_UPDATED_AT, getDateTime());
         long acc_id = dbcreateTicketing.insert(TABLE_TICKETING, null, values);
 
         dbcreateTicketing.close();
@@ -1160,7 +1507,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_TICKET_STATUS,ticketing.getStatus());
         // updating row
         long  k = dbupdateTicketing.update(TABLE_TICKETING, values, KEY_TERMINAL_ID + " = ?",
-                new String[] { String.valueOf(ticketing.getId())});
+                new String[]{String.valueOf(ticketing.getId())});
 
 
         dbupdateTicketing.close();
@@ -1267,7 +1614,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_BUSES_BUS_DRIVER, bus.getDriver());
         values.put(KEY_BUSES_CONDUCTOR,bus.getConductor());
         values.put(KEY_CREATED_AT,getDateTime());
-        values.put(KEY_UPDATED_AT,getDateTime());
+        values.put(KEY_UPDATED_AT, getDateTime());
         long acc_id = dbcreateBus.insert(TABLE_BUSES, null, values);
 
         dbcreateBus.close();
@@ -1336,6 +1683,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         }
     }
+    public  List<Bus> getBusesByRouteId(int routeId){
+        List<Bus> busList = new ArrayList<Bus>();
+        SQLiteDatabase getBusesByRouteId = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM "+TABLE_BUSES+" WHERE "
+                + KEY_BUSES_ROUTE_ID +" ="+routeId;
+        Cursor cursor = getBusesByRouteId.rawQuery(selectQuery,null);
+        if(cursor.getCount() > 0) {
+            if (cursor.moveToFirst()) {
+                do {
+                    //Bus bus = new Terminal();
+                    Bus bus = new Bus();
+                    //bus.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                    bus.setDriver(cursor.getString(cursor.getColumnIndex(KEY_BUSES_BUS_DRIVER)));
+                    bus.setConductor(cursor.getString(cursor.getColumnIndex(KEY_BUSES_CONDUCTOR)));
+                    bus.setBus_id(cursor.getInt(cursor.getColumnIndex(KEY_BUSES_BUS_ID)));
+                    bus.setPlate_no(cursor.getString(cursor.getColumnIndex(KEY_BUSES_BUS_PLATE_NO)));
+                    bus.setRoute_id(cursor.getInt(cursor.getColumnIndex(KEY_BUSES_ROUTE_ID)));
+                    busList.add(bus);
+
+                } while (cursor.moveToNext());
+            }
+            // return contact list
+            cursor.close();
+            getBusesByRouteId.close();
+            return busList;
+        }else {
+            cursor.close();
+            getBusesByRouteId.close();
+            return null;
+
+        }
+    }
 
     public List<Bus> getAllBuses() {
         List<Bus> busList = new ArrayList<Bus>();
@@ -1367,6 +1746,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String myDate;
         Date dt = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        myDate =dateFormat.format(date);
+        return myDate;
+    }
+
+    public String getDate(){
+        String myDate;
+        Date dt = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
         myDate =dateFormat.format(date);
         return myDate;

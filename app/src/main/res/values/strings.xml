@@ -23,6 +23,72 @@
     <string name="str_tvbus">Bus Number</string>
     <string name="str_tvtrip">Trip Type</string>
 
+    <string name="title_err_code">Error Code</string>
+    <string name="title_err_method">Method</string>
+
+    <string name="error_configuration">Please configure your serial port first.</string>
+    <string name="error_security">You do not have read/write permission to the serial
+		port.</string>
+    <string name="error_unknown">The serial port can not be opened for an unknown
+		reason.</string>
+    <string name="CurrentLanguageis"> "Current Printer Language Is :" </string>
+
+    <string name="IsOutOfPaper"> "The printer is out of paper" </string>
+    <string name="HavePaper"> "The printer has a paper" </string>
+    <string name="itpw3">              getting the priner information......</string>
+    <string name="itpw4">              "have updated Font lib "</string>
+    <string name="PrinterNotNormal1"> "The printer is too hot" </string>
+    <string name="getV"> "get version" </string>
+
+    <string name="hello">Hello World,  FileExplorer!</string>
+    <string-array name="language">
+        <item>"U.S.          "</item>
+        <item>"the French    "</item>
+        <item>"German        "</item>
+        <item>"British       "</item>
+        <item>"I Denmark     "</item>
+        <item>"the Swedish   "</item>
+        <item>"Italian       "</item>
+        <item>"Spain  I      "</item>
+        <item>"Japan         "</item>
+        <item>"Norway        "</item>
+        <item>"the Danish II "</item>
+        <item>"the Spanish II"</item>
+        <item>"Latin America "</item>
+        <item>"south Korean  "</item>
+        <item>"slovenija/crow emperor"</item>
+        <item>"Chinese"</item>
+    </string-array>
+
+    <string name="TransactionType1">&quot;HDX-PT95-CUT-945.bin&quot;</string>
+    <string name="TransactionType2">&quot;HDX-PT95-CUT-946.bin&quot;</string>
+    <string name="TransactionType3">&quot;HDX-PT95-LP-945.bin&quot;</string>
+    <string name="TransactionType4">&quot;HDX-PT95-LP-946.bin&quot;</string>
+
+
+    <string name="ZiKuFile1">&quot;hdx_ziku_20151230&quot;</string>
+
+    <string name="itpw">              Updating Firmware......</string>
+    <string name="itpw2">              Updating Font lib......</string>
+    <string name="Determine">"OK"</string>
+    <string name="cancel">"Cancel"</string>
+    <string name="UpdateFWWarn">"warning: the version chosen is old"</string>
+
+<string name="CharDemo">"Char Demo"</string>
+<string name="CodeDemo">"Code Demo"  </string>
+<string name="ImageDemo">"Image Demo" </string>
+<string name="GetVersion">"Get Version" </string>
+<string name="UpdateVersion">"Update Version" </string>
+<string name="UpdateFontLib">"Update Font Lib" </string>
+<string name="WarningTimeIsLong">"Updating Font Lib will Take about 6 minutes" </string>
+<string name="quit">"Quit" </string>
+
+<string name="previousFWV"> "Previous firmware version :" </string>
+<string name="currentFWV"> "Current firmware version :" </string>
+
+<string name="updateFWFinish">"update firmware finish"</string>
+
+<string name="selectFW">"Select FirmWare File"</string>
 
 
     <string name="srt_tv_get_started">Get Started</string>
@@ -95,4 +161,23 @@
         <item>2</item>
 
     </string-array>
+
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="str_tv_time_from">Trip Start Time</string>
+    <string name="str_tv_trip_time_end">Trip End Time</string>
+    <string name="str_tv_speedo_start">Speedo Meter Reading Start</string>
+    <string name="str_tv_trip_speedo_end">Speedometer Reading Stop</string>
+    <string name="str_tv_trip_fuel_start">Fuel Level Before Trip</string>
+    <string name="str_tv_fuel_level_after_trip">Fuel Level After Trip</string>pick_time
+    <string name="pick_start_time">Set Start Time</string>
+    <string name="str_tv_trip_remark">Trip Remark</string>
+    <string name="str_tv_no_of_passengers">Number Of Passengers</string>
+    <string name="pick_stop_time">Set Stop Time</string>
+    <string name="str_btn_connect">Connect</string>
+    <string name="str_btn_disconnect">Disconnect</string>
+    <string name="str_btn_send">Send</string>
+    <string name="str_btn_clear">Clear</string>
+    <string name="str_tv_test">Test Print from the POS Printer</string>
+    <string name="str_btn_test">Test</string>
 </resources>

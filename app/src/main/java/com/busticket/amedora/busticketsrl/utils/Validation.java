@@ -19,15 +19,20 @@ public class Validation {
     private static final String CONFIRM_MSG   = "Password Mismatch";
     private static final String ACCOUNT_NO   = "Invalid Account Number";
 
+
     public static boolean isEmailAddress(EditText editText, boolean required){
-        return isValid(editText,EMAIL_REGEX,EMAIL_MSG,required);
+        return isValid(editText, EMAIL_REGEX, EMAIL_MSG, required);
     }
     public static boolean isPasswordMatch(EditText passText,EditText confirmText, boolean required){
-        return isMatch(passText,confirmText,CONFIRM_MSG,required);
+        return isMatch(passText, confirmText, CONFIRM_MSG, required);
     }
 
     public static boolean isAccountNo(EditText accText,Integer fixed){
-        return numberFixed(accText,ACCOUNT_NO,10);
+        return numberFixed(accText, ACCOUNT_NO, 10);
+    }
+
+    public static boolean isPhoneNumber(EditText editText,boolean required){
+        return inRange(editText, 8, 12);
     }
     public static boolean isMatch(EditText passText,EditText confirmText,String errMsg, boolean required){
         String pwd = passText.getText().toString().trim();
@@ -43,8 +48,14 @@ public class Validation {
     }
 
     public static boolean inRange(EditText editText,Integer min, Integer max){
+
         String txt = editText.getText().toString();
-        return true;
+        if((txt.length()>= min) &&(txt.length()<= max) ){
+            return true;
+        }else{
+            return false;
+        }
+
     }
 
     public static boolean  numberFixed(EditText editText, String errMsg, Integer limit ) {

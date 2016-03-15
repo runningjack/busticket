@@ -7,10 +7,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.busticket.amedora.busticketsrl.model.*;
@@ -22,16 +26,18 @@ import org.json.JSONObject;
  * Created by Amedora on 12/24/2015.
  */
 public class LoadingFeatures extends Activity {
-    RequestQueue kQueue, mQueue,dQueue;
+    RequestQueue kQueue, mQueue,dQueue,bQueue;
     Button btnLoad;
     TextView tvLoadFeature;
     boolean tk =false;
     boolean tl = false; boolean rt =false;
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.layout_loading_features);
         mQueue = Volley.newRequestQueue(getApplicationContext());
         dQueue = Volley.newRequestQueue(getApplicationContext());
-        setContentView(R.layout.layout_loading_features);
+        bQueue = Volley.newRequestQueue(getApplicationContext());
         btnLoad =(Button) findViewById(R.id.btnLoad);
         tvLoadFeature = (TextView)findViewById(R.id.tvLoadingFeatures);
         tvLoadFeature.setText("Setting up your APP! Please Wait...");
@@ -46,6 +52,7 @@ public class LoadingFeatures extends Activity {
     }
 
     protected void LoadF(){
+        insertBuses();
         insertTerminals();
         getRoutes();
 
@@ -60,7 +67,7 @@ public class LoadingFeatures extends Activity {
     }
     public void getTicketing(){
         Apps apps = new Apps();
-        String url ="http://41.77.173.124:81/busticketAPI/ticketing/data/"+apps.getRoute_id();
+        String url ="http://41.77.173.124:81/srltcapi/public/ticketing/data/"+apps.getRoute_id();
 
         JsonArrayRequest jsonTicket = new JsonArrayRequest(Request.Method.GET,url,new Response.Listener<JSONArray>() {
             @Override
@@ -112,7 +119,7 @@ public class LoadingFeatures extends Activity {
         kQueue.add(jsonTicket);
     }
     public void getRoutes(){
-        String url = "http://41.77.173.124:81/busticketAPI/route/index";
+        String url = "http://41.77.173.124:81/srltcapi/public/route/index";
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -160,7 +167,7 @@ public class LoadingFeatures extends Activity {
     private void insertTerminals(){
         //RequestQueue requestQueue = new RequestQueue(m)
         //mQueue = Volley.newRequestQueue(getApplicationContext());
-        String url ="http://41.77.173.124:81/busticketAPI/terminals/index";
+        String url ="http://41.77.173.124:81/srltcapi/public/terminals/index";
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -205,5 +212,60 @@ public class LoadingFeatures extends Activity {
             }
         });
         dQueue.add(jsonArrayRequest);
+    }
+    private void insertBuses(){
+        //RequestQueue requestQueue = new RequestQueue(m)
+        String url ="http://41.77.173.124:81/srltcapi/public/buses/index";
+        JsonArrayRequest jsonArrayRequestBus = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try{
+                    // Iterator<String> iter = response.keys();
+                    int ja = response.length();
+                    for(int i=0; i<ja; i++){
+                        //String key = iter.next();
+                        JSONObject term = (JSONObject) response.get(i);
+                        //JSONArray jsonArrayTerminals = response.getJSONArray("data");
+                        DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+                        Bus b = db.getBusByPlateNo(term.getString("plate_no"));
+                        if(db.ifExistsBus(b)){
+
+                        }else{
+
+                            Toast.makeText(LoadingFeatures.this, " Loading Buses", Toast.LENGTH_SHORT).show();
+                            Bus bus = new Bus();
+                            bus.setBus_id(term.getInt("id"));
+                            bus.setDriver(term.getString("driver"));
+                            bus.setPlate_no(term.getString("plate_no"));
+                            bus.setConductor(term.getString("conductor"));
+                            bus.setRoute_id(term.getInt("route_id"));
+
+                            long u = db.createBus(bus);
+                            String numberAsString = new Double(u).toString();
+                            String counte = new Double(i).toString();
+                            Toast.makeText(LoadingFeatures.this,numberAsString+", "+counte, Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                }catch (Exception e){
+                    VolleyLog.d("Error: " + e.getMessage());
+                    Toast.makeText(LoadingFeatures.this, "Network Error", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Error: " + error.getMessage());
+                Toast.makeText(LoadingFeatures.this, error.toString(), Toast.LENGTH_SHORT).show();
+                // hide the progress dialog
+                //pDialog.hide();
+            }
+        });
+        int socketTimeout = 10000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsonArrayRequestBus.setRetryPolicy(policy);
+        bQueue.add(jsonArrayRequestBus);
     }
 }

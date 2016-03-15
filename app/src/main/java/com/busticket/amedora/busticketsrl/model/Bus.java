@@ -53,4 +53,6 @@ public class Bus {
     public String getPlate_no() {
         return plate_no;
     }
+
+
 }

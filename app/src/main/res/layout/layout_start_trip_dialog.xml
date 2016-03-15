@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:layout_margin="15dp">
+    <TextView
+        android:layout_width="282dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/str_tv_speedo_start"
+        android:id="@+id/tvFro"
+        android:textColor="#FFFFCF4E" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="time"
+        android:layout_marginBottom="10dp"
+        android:ems="10"
+        android:id="@+id/edtTripSpeedoStart" />
+
+    <TextView
+        android:layout_width="194dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/str_tv_no_of_passengers"
+        android:id="@+id/tvFrom"
+        android:textColor="#FFFFCF4E" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="time"
+        android:ems="10"
+        android:id="@+id/edtTripPassengerNo" />
+</LinearLayout>
