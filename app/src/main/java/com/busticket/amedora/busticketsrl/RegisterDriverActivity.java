@@ -1,5 +1,6 @@
 package com.busticket.amedora.busticketsrl;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,7 @@ public class RegisterDriverActivity extends AppCompatActivity {
     TextView errTv;
     RequestQueue rQDriver;
     DatabaseHelper db;
+    ProgressDialog dialog  =null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,8 +82,8 @@ public class RegisterDriverActivity extends AppCompatActivity {
     }
 
     public void getDriverDetails() {
-
-        String url = "http://41.77.173.124:81/srltcapi/public/driver/data/"+licenceNo;
+        dialog = ProgressDialog.show(RegisterDriverActivity.this, "", "Getting driver data from server. Please wait...", true);
+        String url = "http://platinumandco.com/slrtcapi/public/driver/data/"+licenceNo;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -137,6 +139,7 @@ public class RegisterDriverActivity extends AppCompatActivity {
                     Toast.makeText(RegisterDriverActivity.this,ex.getMessage(), Toast.LENGTH_SHORT).show();
                     VolleyLog.d("Driver Err", ex.getMessage());
                 }
+                dialog.dismiss();
 
             }
         }, new Response.ErrorListener() {
@@ -144,6 +147,7 @@ public class RegisterDriverActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(RegisterDriverActivity.this,error.getMessage(), Toast.LENGTH_SHORT).show();
                 VolleyLog.d("Driver Err", error.getMessage());
+                dialog.dismiss();
             }
         });
         int socketTimeout = 20000;//30 seconds

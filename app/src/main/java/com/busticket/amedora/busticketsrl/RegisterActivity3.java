@@ -15,9 +15,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -76,19 +78,23 @@ public class RegisterActivity3 extends Activity {
         kQueue = Volley.newRequestQueue(getApplicationContext());
         edtPhone.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
             @Override
             public void afterTextChanged(Editable s) {
-               // Validation.isPhoneNumber(edtPhone, true);
+                // Validation.isPhoneNumber(edtPhone, true);
             }
         });
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               if(validate()) {
-                    dialog = ProgressDialog.show(RegisterActivity3.this, "", "Creating your ticketer account. Please wait...", true);
+                if (validate()) {
+                   /* dialog = ProgressDialog.show(RegisterActivity3.this, "", "Creating your ticketer account. Please wait...", true);
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -107,9 +113,10 @@ public class RegisterActivity3 extends Activity {
 
                             Looper.loop();
                         }
-                    }).start();
-                }else{
-                    Toast.makeText(RegisterActivity3.this,"Please supply phone number",Toast.LENGTH_LONG).show();
+                    }).start();*/
+                    register();
+                } else {
+                    Toast.makeText(RegisterActivity3.this, "Please supply phone number", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -120,9 +127,12 @@ public class RegisterActivity3 extends Activity {
                 onBackPressed();
             }
         });
+
+
     }
 
   private void register(){
+      dialog = ProgressDialog.show(RegisterActivity3.this, "", "Synchronizing App Data. Please wait...", true);
       AppID       =  Installation.appId(getApplicationContext());
             HashMap<String,String> params = new HashMap<String,String>();
             params.put("company",SName);
@@ -135,70 +145,78 @@ public class RegisterActivity3 extends Activity {
             params.put("password",Password);
       JSONObject json = new JSONObject(params);
       Log.d("JSON D", json.toString());
-            String url = "http://41.77.173.124:81/srltcapi/public/merchants/create";
+            String url = "http://platinumandco.com/slrtcapi/public/merchants/create";
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url,json,new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                    // VolleyLog.d("Return Json",response.toString());
+                    Apps app = new Apps();
                     try{
-                        if(Boolean.parseBoolean(response.getString("success"))==true){
-                            //VolleyLog.d("Return Json",response.getString("success"));
-                            //dialog.dismiss();
-                            Log.d("Return JSON",response.getString("code"));
-                            Toast.makeText(getApplicationContext(),"Return JSON " +response.getString("code"),Toast.LENGTH_LONG).show();
-                            Apps app = new Apps();
+                        if(response.getString("code").equals("200")){
                             app.setApp_id(AppID);
-                            app.setAgent_id(response.getString("data"));
+                            app.setAgent_id(response.getString("data")); //agent id is merchant id
                             app.setPassword(Password);
-                            app.setIs_logged_in(1);
+                            app.setIs_logged_in(0); // merchant should not be logged in yet
                             app.setStatus(0);
+                            Toast.makeText(getApplicationContext(),response.getString("msg"),Toast.LENGTH_LONG).show();
 
                             try{
-                                if(db.createApp(app) >0){
-                                    Toast.makeText(getApplicationContext(),"App Created Record Save",Toast.LENGTH_LONG).show();
+                                if(db.getApp(AppID)==null){
+                                    if(db.createApp(app) >0){
+                                        //dialog.dismiss();
+                                        Toast.makeText(getApplicationContext(),"App Created Record Save",Toast.LENGTH_LONG).show();
+                                        Intent serverIntent = new Intent(  RegisterActivity3.this,RegisterActivityBank.class);
+                                        serverIntent.putExtra("Password",Password);
+                                        startActivity(serverIntent);
+
+                                    }
+                                }else{
                                     Intent serverIntent = new Intent(  RegisterActivity3.this,RegisterActivityBank.class);
                                     serverIntent.putExtra("Password",Password);
                                     startActivity(serverIntent);
                                 }
-
                             }catch(Exception ex){
-                                VolleyLog.d("Return Json",ex.getMessage());
+                                VolleyLog.d("Return Json", ex.getMessage());
+
                             }
+
                         }else{
                             Installation.deleteInstallionFile(getApplicationContext());
                             Toast.makeText(getApplicationContext(),response.getString("msg"),Toast.LENGTH_LONG).show();
-                            VolleyLog.d("Return Json",response.toString());
+                            //db.deleteApps(app);
+                            VolleyLog.d("Return Json", response.toString());
+
                         }
                     }catch(Exception ex){
-
                         Toast.makeText(getApplicationContext(),response.toString()+" "+ex.getMessage(),Toast.LENGTH_LONG).show();
-                        VolleyLog.d("Return Json",ex.getMessage());
+                        VolleyLog.d("Return Json", ex.getMessage());
                         try {
                             Installation.deleteInstallionFile(getApplicationContext());
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
                     }
+                    dialog.dismiss();
 
                 }
             },new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-
                     try {
-
                         Installation.deleteInstallionFile(getApplicationContext());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     VolleyLog.d("Return Json",error.getMessage());
+                    dialog.dismiss();
                 }
             });
-
-            kQueue.add(jsonObjectRequest);
-
-            //dialog.dismiss();
-
+      int socketTimeout = 3000;//30 seconds
+      RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, 2, 2);
+      jsonObjectRequest.setRetryPolicy(policy);
+      kQueue.add(jsonObjectRequest);
     }
 
     private boolean checkValidation() {

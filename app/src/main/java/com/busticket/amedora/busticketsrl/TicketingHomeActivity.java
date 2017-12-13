@@ -48,7 +48,9 @@ import com.busticket.amedora.busticketsrl.model.Bus;
 import com.busticket.amedora.busticketsrl.model.Route;
 import com.busticket.amedora.busticketsrl.model.Terminal;
 import com.busticket.amedora.busticketsrl.model.Ticket;
+import com.busticket.amedora.busticketsrl.model.Ticketing;
 import com.busticket.amedora.busticketsrl.model.Trip;
+import com.busticket.amedora.busticketsrl.utils.AppStatus;
 import com.busticket.amedora.busticketsrl.utils.DatabaseHelper;
 import com.busticket.amedora.busticketsrl.utils.DrawerAdapter;
 import com.busticket.amedora.busticketsrl.utils.Installation;
@@ -80,7 +82,7 @@ public class TicketingHomeActivity extends AppCompatActivity {
     public static final String ACCOUNT_TYPE = "busticket.com";
     // The account name
     public static final String ACCOUNT = "dummyaccount";
-    RequestQueue mQueue,rQSyncTicket,rQSyncBalance,rqTrip;
+    RequestQueue mQueue,rQSyncTicket,rQSyncBalance,rqTrip,rQSyncTicketing,rQSyncTicketSynch,rQSyncTicketingSynch;
     // Instance fields
     Account mAccount;
     ContentResolver mResolver;
@@ -110,7 +112,7 @@ public class TicketingHomeActivity extends AppCompatActivity {
     DrawerLayout Drawer;
                                       // Declaring DrawerLayout
 
-    ProgressDialog dialog  =null;
+    ProgressDialog dialog,dialog2,dialog3,dialog4  =null;
     String NAME="";
     ActionBarDrawerToggle mDrawerToggle;
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,11 +132,15 @@ public class TicketingHomeActivity extends AppCompatActivity {
         mAccount = CreateSyncAccount(this);
         mQueue = Volley.newRequestQueue(getApplicationContext());
         rQSyncTicket = Volley.newRequestQueue(getApplicationContext());
+        rQSyncTicketSynch = Volley.newRequestQueue(getApplicationContext());
         rQSyncBalance = Volley.newRequestQueue(getApplicationContext());
         rqTrip = Volley.newRequestQueue(getApplicationContext());
-        insertTerminals();
-        insertBuses();
-        getTickets();
+        rQSyncTicketing = Volley.newRequestQueue(getApplicationContext());
+        rQSyncTicketingSynch = Volley.newRequestQueue(getApplicationContext());
+        //Key methods needed to be sent to server on activity created
+        syncTicketing();
+        syncTickets();
+
         apps = db.getApp(Installation.appId(getApplicationContext()));
         EMAIL =apps.getRoute_name();
         NAME = "CODE: "+apps.getAgent_code().toUpperCase() +" Trip: "+apps.getTripCount();
@@ -288,10 +294,17 @@ public class TicketingHomeActivity extends AppCompatActivity {
                         startActivity(intent);
                     }else if(recyclerView.getChildPosition(child) == 4){
 
-                        syncTickets();
+                        syncTicketingSynchronize();
+                        syncTicketsSynchronize();
+                        synchAccount();
+                        insertBuses();
+                        //insertTerminals();
 
-                        dialog = ProgressDialog.show(TicketingHomeActivity.this, "", "Synchronizing App Data. Please wait...", true);
-                        new Thread(new Runnable() {
+
+                        //syncTickets();
+
+                        //dialog = ProgressDialog.show(TicketingHomeActivity.this, "", "Synchronizing App Data. Please wait...", true);
+                        /*new Thread(new Runnable() {
                             @Override
                             public void run() {
 
@@ -300,11 +313,16 @@ public class TicketingHomeActivity extends AppCompatActivity {
                                 final Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
                                     @Override
-                                    public void run() {
-                                        synchAccount();
-                                        insertBuses();
+                                    public void run() {*/
+
+                                       // insertTerminals();
+
+
+                                       // insertBuses();
+                                        //getTickets();
+
                                         //Toast.makeText(TicketingHomeActivity.this, "Looper startes ", Toast.LENGTH_SHORT).show();
-                                        handler.removeCallbacks(this);
+                                        /*handler.removeCallbacks(this);
 
                                         Looper.myLooper().quit();
                                     }
@@ -312,7 +330,7 @@ public class TicketingHomeActivity extends AppCompatActivity {
 
                                 Looper.loop();
                             }
-                        }).start();
+                        }).start();*/
 
                     }else if(recyclerView.getChildPosition(child) == 5){
                         if(apps.getLicenceNo() != null){
@@ -436,128 +454,12 @@ public class TicketingHomeActivity extends AppCompatActivity {
         return newAccount;
     }
 
-    private void insertTerminals(){
-        //RequestQueue requestQueue = new RequestQueue(m)
-        //mQueue = Volley.newRequestQueue(getApplicationContext());
-        String url ="http://41.77.173.124:81/srltcapi/public/terminals/index";
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try{
-                    // Iterator<String> iter = response.keys();
-                    int ja = response.length();
-                    for(int i=0; i<ja; i++){
-                        //String key = iter.next();
-                        JSONObject term = (JSONObject) response.get(i);
-                        //JSONArray jsonArrayTerminals = response.getJSONArray("data");
-                        DatabaseHelper db = new DatabaseHelper(getApplicationContext());
-                        Terminal t = db.getTerminalByName(term.getString("short_name"));
-                        if(db.ifExists(t)){
 
-                        }else{
-                            Terminal terminal = new Terminal();
-                            terminal.setTerminal_id(term.getInt("id"));
-                            terminal.setShort_name(term.getString("short_name"));
-                            terminal.setName(term.getString("name"));
-                            terminal.setDistance(term.getString("distance"));
-                            terminal.setOne_way_from_fare(term.getDouble("one_way_from_fare"));
-                            terminal.setOne_way_to_fare(term.getDouble("one_way_to_fare"));
-                            terminal.setDistance(term.getString("distance"));
-                            terminal.setRoute_id(term.getInt("route_id"));
-                            terminal.setGeodata(term.getString("geodata"));
-                            db.createTerminal(terminal);
-                        }
-                    }
-                }catch (Exception e){
-                    VolleyLog.d(TAG, "Error: " + e.getMessage());
-                    Toast.makeText(TicketingHomeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(TicketingHomeActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-                // hide the progress dialog
-                //pDialog.hide();
-            }
-        });
-        int socketTimeout = 30000;//30 seconds - change to what you want
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        jsonArrayRequest.setRetryPolicy(policy);
-        mQueue.add(jsonArrayRequest);
-    }
 
-    private void insertBuses(){
-        //RequestQueue requestQueue = new RequestQueue(m)
-        String url ="http://41.77.173.124:81/srltcapi/public/buses/index";
-        JsonArrayRequest jsonArrayRequestBus = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try{
-                    // Iterator<String> iter = response.keys();
-                    int ja = response.length();
-                    for(int i=0; i<ja; i++){
-                        //String key = iter.next();
-                        JSONObject term = (JSONObject) response.get(i);
-                        //JSONArray jsonArrayTerminals = response.getJSONArray("data");
-                        DatabaseHelper db = new DatabaseHelper(getApplicationContext());
-                        Bus b = db.getBusByPlateNo(term.getString("plate_no"));
-                        if(db.ifExistsBus(b)){
-
-                            Toast.makeText(TicketingHomeActivity.this, " Beginning Bus Synchronization", Toast.LENGTH_SHORT).show();
-
-                            b.setDriver(term.getString("driver"));
-
-                            b.setRoute_id(term.getInt("route_id"));
-
-                            long u = db.updateBus(b);
-                            String numberAsString = new Double(u).toString();
-                            String counte = new Double(i).toString();
-                            Toast.makeText(TicketingHomeActivity.this,"Updating bus details "+numberAsString+", "+counte, Toast.LENGTH_SHORT).show();
-
-                        }else{
-
-                            Toast.makeText(TicketingHomeActivity.this, " Beginning Bus Synchronization", Toast.LENGTH_SHORT).show();
-                            Bus bus = new Bus();
-                            bus.setBus_id(term.getInt("id"));
-                            bus.setDriver(term.getString("driver"));
-                            bus.setPlate_no(term.getString("plate_no"));
-                            bus.setConductor(term.getString("conductor"));
-                            bus.setRoute_id(term.getInt("route_id"));
-
-                            long u = db.createBus(bus);
-                            String numberAsString = new Double(u).toString();
-                            String counte = new Double(i).toString();
-                            Toast.makeText(TicketingHomeActivity.this,"Adding new bus "+numberAsString+", "+counte, Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-
-                }catch (Exception e){
-                    VolleyLog.d(TAG, "Error: " + e.getMessage());
-                    Toast.makeText(TicketingHomeActivity.this, "Network Error 1", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(TicketingHomeActivity.this, "Network Error 2", Toast.LENGTH_SHORT).show();
-                // hide the progress dialog
-                //pDialog.hide();
-            }
-        });
-        int socketTimeout = 10000;//30 seconds - change to what you want
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        jsonArrayRequestBus.setRetryPolicy(policy);
-        mQueue.add(jsonArrayRequestBus);
-    }
 
     private void getTickets(){
-        String url ="http://41.77.173.124:81/srltcapi/public/tickets/data/"+Installation.appId(getApplicationContext());
+        String url ="http://platinumandco.com/slrtcapi/public/tickets/data/"+Installation.appId(getApplicationContext());
         JsonArrayRequest jsonArrayRequestTicket = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -697,7 +599,7 @@ public class TicketingHomeActivity extends AppCompatActivity {
                         ex.printStackTrace();
                         Log.e("Sysnc Err",ex.getMessage());
                     }
-                    dialog.dismiss();
+                   // dialog.dismiss();
                     //Toast.makeText(TicketingHomeActivity.this,"Record Updated to server Successfully", Toast.LENGTH_SHORT).show();
                 }
             }, new Response.ErrorListener() {
@@ -721,8 +623,168 @@ public class TicketingHomeActivity extends AppCompatActivity {
         //
     }
 
+    private void syncTicketing(){
+        List<Ticketing> issuedTickets = db.getAllTicketings(); // get tickets issued with status 1
+        if(issuedTickets != null){
+            HashMap<String, String> params = new HashMap<String, String>();
+            String url ="http://41.77.173.124:81/busticketAPI/ticketing/batchsync/"+Installation.appId(getApplicationContext());
+            params.put("tickets", issuedTickets.toString());
+            JSONObject j = new JSONObject(params);
+            Log.d("BATCH", issuedTickets.toString());
+            //params.put("app_id",)
+            JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST,url, j, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try{
+                        String code = response.getString("code");
+                        Log.d("RES", response.toString());//Boolean.getBoolean(response.getString("success")) == true
+                        if(code.equals("200")){
+                            Toast.makeText(TicketingHomeActivity.this,response.getString("msg"), Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(TicketingHomeActivity.this,response.getString("msg"), Toast.LENGTH_SHORT).show();
+                        }
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                        Log.e("Sysnc Err",ex.getMessage());
+                    }
+                    //dialog.dismiss();
+                    //Toast.makeText(TicketingHomeActivity.this,"Record Updated to server Successfully", Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                    //Log.d("VEE", error.getMessage());
+                    Toast.makeText(TicketingHomeActivity.this,error.getMessage(), Toast.LENGTH_SHORT).show();
+                    //VolleyLog.d(error.getMessage(),"VVVV");
+                    //dialog.dismiss();
+                }
+            });
+            int socketTimeout = 1200;//30 seconds
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, 2, 2);
+            jsonArrayRequest.setRetryPolicy(policy);
+            rQSyncTicketing.add(jsonArrayRequest);
+        }
+
+    }
+
+    /**
+     * Section for synchronizing
+     *
+     */
+
+    private void syncTicketingSynchronize(){
+        List<Ticketing> issuedTickets = db.getAllTicketings(); // get tickets issued with status 1
+        if(issuedTickets != null){
+            dialog2 = ProgressDialog.show(TicketingHomeActivity.this, "", "Synchronizing Ticket Data. Please wait...", true);
+            HashMap<String, String> params = new HashMap<String, String>();
+            String url ="http://41.77.173.124:81/busticketAPI/ticketing/batchsync/"+Installation.appId(getApplicationContext());
+            params.put("tickets", issuedTickets.toString());
+            JSONObject j = new JSONObject(params);
+            Log.d("BATCH", issuedTickets.toString());
+            //params.put("app_id",)
+            JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST,url, j, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try{
+                        String code = response.getString("code");
+                        Log.d("RES",response.toString());//Boolean.getBoolean(response.getString("success")) == true
+                        if(code.equals("200")){
+                            Toast.makeText(TicketingHomeActivity.this,response.getString("msg"), Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(TicketingHomeActivity.this,response.getString("msg"), Toast.LENGTH_SHORT).show();
+                        }
+                        dialog2.dismiss();
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                        Log.e("Sysnc Err",ex.getMessage());
+                    }finally {
+                        dialog2.dismiss();
+                    }
+
+                    Toast.makeText(TicketingHomeActivity.this,"Record Updated to server Successfully", Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    dialog2.dismiss();
+                    Toast.makeText(TicketingHomeActivity.this,"Network Error", Toast.LENGTH_SHORT).show();
+                }
+            });
+            int socketTimeout = 3300;//30 seconds
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,2, 2);
+            jsonArrayRequest.setRetryPolicy(policy);
+            rQSyncTicketingSynch.add(jsonArrayRequest);
+        }
+        //dialog2.dismiss();
+    }
+
+    private void syncTicketsSynchronize(){
+        List<Ticket> issuedTickets = db.getIssuedTickets(); // get tickets issued with status 1
+        if(issuedTickets !=null){
+            dialog = ProgressDialog.show(TicketingHomeActivity.this, "", "Synchronizing Ticket Sold Data... Please wait...", true);
+            HashMap<String, String> params = new HashMap<String, String>();
+            String url ="http://41.77.173.124:81/busticketAPI/tickets/batchsync/"+Installation.appId(getApplicationContext());
+            params.put("tickets", issuedTickets.toString());
+            JSONObject j = new JSONObject(params);
+            Log.d("BATCH", issuedTickets.toString());
+            //params.put("app_id",)
+            JsonObjectRequest jsonArrayRequest = new JsonObjectRequest(Request.Method.POST,url, j, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try{
+                        String code = response.getString("code");
+                        Log.d("RES",response.toString());//Boolean.getBoolean(response.getString("success")) == true
+                        if(code.equals("200")){
+                            JSONArray jsonArray = response.getJSONArray("data");
+                            if(jsonArray.length() > 0){
+                                for(int i = 0; i < jsonArray.length(); i++){
+                                    DatabaseHelper dbr = new DatabaseHelper(getApplicationContext());
+                                    Ticket r = dbr.getTicketBySerialNo(jsonArray.getJSONObject(i).getString("serial_no"));
+                                    if(dbr.ifExists(r)){
+                                        r.setStatus(jsonArray.getJSONObject(i).getInt("status"));
+                                        long u = db.updateTicket(r);
+                                        if(u > 0){
+                                            Toast.makeText(TicketingHomeActivity.this,"Synchronising.."+ i, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }else {
+                                        Toast.makeText(TicketingHomeActivity.this,"Synchronising.. Data Up to date"+ i, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }else {
+                                Toast.makeText(TicketingHomeActivity.this,"Synchronising.. Data Up to date", Toast.LENGTH_SHORT).show();
+                            }
+                        }else{
+                            Toast.makeText(TicketingHomeActivity.this,response.getString("msg"), Toast.LENGTH_SHORT).show();
+                        }
+                        dialog.dismiss();
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                        Log.e("Sysnc Err",ex.getMessage());
+                    }finally {
+                        dialog.dismiss();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                dialog.dismiss();
+                Toast.makeText(TicketingHomeActivity.this,"Network Error! Could not connect to server", Toast.LENGTH_SHORT).show();
+                }
+            });
+            int socketTimeout = 3000;//30 seconds
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, 2, 2);
+            jsonArrayRequest.setRetryPolicy(policy);
+            rQSyncTicketSynch.add(jsonArrayRequest);
+        }else{
+            dialog.dismiss();
+            Toast.makeText(TicketingHomeActivity.this,"No ticket data available to synchronize", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void synchAccount(){
-        String url ="http://41.77.173.124:81/srltcapi/public/account/synch/"+apps.getApp_id();
+        dialog3 = ProgressDialog.show(TicketingHomeActivity.this, "", "Synchronizing Account Data. Please wait...", true);
+        String url ="http://platinumandco.com/slrtcapi/public/account/synch/"+apps.getApp_id();
 
         JsonObjectRequest uAccount = new JsonObjectRequest(Request.Method.GET,url, new Response.Listener<JSONObject>() {
             @Override
@@ -744,17 +806,7 @@ public class TicketingHomeActivity extends AppCompatActivity {
                         apps.setBalance(myapp.getDouble("balance"));
                         apps.setStatus(myapp.getInt("status"));
                         apps.setAgent_code(myapp.getString("agent_code"));
-                        //apps.setIs_logged_in(cursor.getColumnIndex(KEY_APP_IS_LOGGED_IN));
-                        //apps.setBusID(cursor.getInt(cursor.getColumnIndex(KEY_APP_BUS_ID)));
-                        //apps.setScheduleID(cursor.getInt(cursor.getColumnIndex(KEY_APP_SCHEDULE_ID)));
-                        //apps.setDriverFname(cursor.getString(cursor.getColumnIndex(KEY_APP_DRIVER_FNAME)));
-                        //apps.setDriverLname(cursor.getString(cursor.getColumnIndex(KEY_APP_DRIVER_LNAME)));
-                        //apps.setDriverID(cursor.getInt(cursor.getColumnIndex(KEY_APP_DRIVER_ID)));
-                        //apps.setTripCount(cursor.getInt(cursor.getColumnIndex(KEY_APP_TRIPS)));
-
                         apps.setAppMode(myapp.getInt("app_mode"));
-
-
                         if(db.updateApp(apps)>0){
                             Toast.makeText(TicketingHomeActivity.this,"Account Synchronized Successfully", Toast.LENGTH_SHORT).show();
 
@@ -776,128 +828,146 @@ public class TicketingHomeActivity extends AppCompatActivity {
                     Toast.makeText(TicketingHomeActivity.this,ex.getMessage(), Toast.LENGTH_SHORT).show();
                     VolleyLog.d("Driver Err", ex.getMessage());
                 }
-
+                dialog3.dismiss();
                 Toast.makeText(TicketingHomeActivity.this, "Account Updated", Toast.LENGTH_SHORT).show();
             }
         },new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(TicketingHomeActivity.this, "Account balance could not be updated Unexpected Errors", Toast.LENGTH_SHORT).show();
+                dialog3.dismiss();
             }
+
         });
-        int socketTimeout = 20000;//30 seconds - change to what you want
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        int socketTimeout = 2000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, 2, 2);
         uAccount.setRetryPolicy(policy);
         rQSyncBalance.add(uAccount);
     }
-
-    private void syncAccount(){
-        List<Ticket> issuedTickets = db.getIssuedTickets(); // get tickets issued with status 1
-        if(issuedTickets.size()>=1){
-            HashMap<String, String> params = new HashMap<String, String>();
-            JSONObject jsonBody = new JSONObject();
-            //jsonBody.put(ticket);
-
-            String url ="http://41.77.173.124:81/srltcapi/public/account/balancesync/"+Installation.appId(getApplicationContext());
-            StringRequest post = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-
-                        apps.setBalance(Double.parseDouble(response.toString()));
-
-                            //listener.onResponse(response.toString());
-                        if(db.updateApp(apps) > 0){
-                            Toast.makeText(TicketingHomeActivity.this,"Account Updated! Your current balance is "+response.toString(), Toast.LENGTH_SHORT).show();
-                        }else{
-                            Toast.makeText(TicketingHomeActivity.this,"Unexpected Error! Your current balance was not updated ", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.d("Error: ", e.getMessage());
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
-            });
-            int socketTimeout = 20000;//30 seconds
-            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-            post.setRetryPolicy(policy);
-            rQSyncBalance.add(post);
-
-
-        }
-        dialog.dismiss();
-    }
-
-    private void postTicket(){
-        List<Ticket> usedTickets = db.getUsedTickets();
-        int k =0;
-        if(usedTickets.size()>=1){
-            for(Ticket ticket : usedTickets){
-                String url ="http://41.77.173.124:81/srltcapi/public/tickets/update/"+ticket.getTicket_id()+"/1";
-                JsonObjectRequest jUpdateTicket = new JsonObjectRequest(Request.Method.GET,url,new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try{
-                            if(response.getString("msg") == "success"){
-                                Toast.makeText(TicketingHomeActivity.this,"Record Updated ton server Successfully", Toast.LENGTH_SHORT).show();
-                            }
-                        }catch(Exception e){
-                            Toast.makeText(TicketingHomeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(TicketingHomeActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-                int socketTimeout = 30000;//30 seconds - change to what you want
-                RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-                jUpdateTicket.setRetryPolicy(policy);
-                mQueue.add(jUpdateTicket);
-            }
-        }
-
-    }
-
-    private void postTicketing(){
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("ticket_id", "AbCdEfGh123456");
-        //JsonObjectRequest req = new JsonObjectRequest(URL, new JSONObject(params),
-               // new Response.Listener<JSONObject>()
-    }
-
-    private void getAppBalance(){
-        String url = "http://41.77.173.124:81/srltcapi/public/account/update/"+apps.getApp_id()+"/"+apps;
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,url,new Response.Listener<JSONObject>() {
+    /**function to sysnchronize buses; Buses should be synchronized
+    * In order to get the route they are assigned
+    */
+    private void insertBuses(){
+        //RequestQueue requestQueue = new RequestQueue(m)
+        dialog4 = ProgressDialog.show(TicketingHomeActivity.this, "", "Updating Bus information... Please wait...", true);
+        String url ="http://platinumandco.com/slrtcapi/public/buses/index";
+        JsonArrayRequest jsonArrayRequestBus = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(JSONArray response) {
                 try{
-                    if(response.getString("code").equals("200") ){
-                        Toast.makeText(TicketingHomeActivity.this,"Record Updated to server Successfully", Toast.LENGTH_SHORT).show();
+                    // Iterator<String> iter = response.keys();
+                    int ja = response.length();
+                    for(int i=0; i<ja; i++){
+                        //String key = iter.next();
+                        JSONObject term = (JSONObject) response.get(i);
+                        //JSONArray jsonArrayTerminals = response.getJSONArray("data");
+                        DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+                        Bus b = db.getBusByPlateNo(term.getString("plate_no"));
+                        if(db.ifExistsBus(b)){
+
+                            Toast.makeText(TicketingHomeActivity.this, " Beginning Bus Synchronization", Toast.LENGTH_SHORT).show();
+
+                            b.setDriver(term.getString("driver"));
+
+                            b.setRoute_id(term.getInt("route_id"));
+
+                            long u = db.updateBus(b);
+                            String numberAsString = new Double(u).toString();
+                            String counte = new Double(i).toString();
+                            Toast.makeText(TicketingHomeActivity.this,"Updating bus details "+numberAsString+", "+counte, Toast.LENGTH_SHORT).show();
+
+                        }else{
+
+                            Toast.makeText(TicketingHomeActivity.this, " Beginning Bus Synchronization", Toast.LENGTH_SHORT).show();
+                            Bus bus = new Bus();
+                            bus.setBus_id(term.getInt("id"));
+                            bus.setDriver(term.getString("driver"));
+                            bus.setPlate_no(term.getString("plate_no"));
+                            bus.setConductor(term.getString("conductor"));
+                            bus.setRoute_id(term.getInt("route_id"));
+
+                            long u = db.createBus(bus);
+                            String numberAsString = new Double(u).toString();
+                            String counte = new Double(i).toString();
+                            Toast.makeText(TicketingHomeActivity.this,"Adding new bus "+numberAsString+", "+counte, Toast.LENGTH_SHORT).show();
+                        }
+
                     }
-                }catch(Exception e){
+                    dialog4.dismiss();
+                }catch (Exception e){
+                    VolleyLog.d(TAG, "Error: " + e.getMessage());
+                    Toast.makeText(TicketingHomeActivity.this, "Network Error --Bus--", Toast.LENGTH_SHORT).show();
+                }finally {
+                    dialog4.dismiss();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                dialog4.dismiss();
+                Toast.makeText(TicketingHomeActivity.this, "Network Error --Bus--", Toast.LENGTH_SHORT).show();
+            }
+        });
+        int socketTimeout = 10000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsonArrayRequestBus.setRetryPolicy(policy);
+        mQueue.add(jsonArrayRequestBus);
+    }
+
+
+    //Function to synchronize terminal
+    private void insertTerminals(){
+
+        String url ="http://platinumandco.com/slrtcapi/public/terminals/index";
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try{
+                    // Iterator<String> iter = response.keys();
+                    int ja = response.length();
+                    for(int i=0; i<ja; i++){
+                        //String key = iter.next();
+                        JSONObject term = (JSONObject) response.get(i);
+                        //JSONArray jsonArrayTerminals = response.getJSONArray("data");
+                        DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+                        Terminal t = db.getTerminalByName(term.getString("short_name"));
+                        if(db.ifExists(t)){
+
+                        }else{
+                            Terminal terminal = new Terminal();
+                            terminal.setTerminal_id(term.getInt("id"));
+                            terminal.setShort_name(term.getString("short_name"));
+                            terminal.setName(term.getString("name"));
+                            terminal.setDistance(term.getString("distance"));
+                            terminal.setOne_way_from_fare(term.getDouble("one_way_from_fare"));
+                            terminal.setOne_way_to_fare(term.getDouble("one_way_to_fare"));
+                            terminal.setDistance(term.getString("distance"));
+                            terminal.setRoute_id(term.getInt("route_id"));
+                            terminal.setGeodata(term.getString("geodata"));
+                            db.createTerminal(terminal);
+                        }
+                    }
+                }catch (Exception e){
+                    VolleyLog.d(TAG, "Error: " + e.getMessage());
                     Toast.makeText(TicketingHomeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
-        },new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                Toast.makeText(TicketingHomeActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                // hide the progress dialog
+                //pDialog.hide();
             }
         });
-
-        int socketTimeout = 35000;//30 seconds - change to what you want
+        int socketTimeout = 30000;//30 seconds - change to what you want
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        jsonObjReq.setRetryPolicy(policy);
-        mQueue.add(jsonObjReq);
+        jsonArrayRequest.setRetryPolicy(policy);
+        mQueue.add(jsonArrayRequest);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

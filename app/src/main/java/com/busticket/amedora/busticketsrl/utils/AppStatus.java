@@ -4,6 +4,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
  * Created by Amedora on 9/1/2015.
  */
@@ -20,16 +24,19 @@ public class AppStatus {
     }
 
     public boolean isOnline(){
-        try{
-            connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            connected = networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
-            return connected;
-        }catch (Exception e){
-            System.out.println("CheckConnectivity Exception: " + e.getMessage());
-        }
 
-        return connected;
+            boolean success = false;
+            try {
+                URL url = new URL("https://google.com");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(10000);
+                connection.connect();
+                success = connection.getResponseCode() == 200;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return success;
+
     }
 
 }

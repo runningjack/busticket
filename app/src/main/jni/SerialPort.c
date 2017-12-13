@@ -153,14 +153,14 @@ JNIEXPORT void JNICALL Java_com_busticket_amedora_busticketsrl_androidserialport
 
   (JNIEnv *env, jobject thiz)
 {
-	jclass SerialPortClass = (*env)->GetObjectClass(env, thiz);
-	jclass FileDescriptorClass = (*env)->FindClass(env, "java/io/FileDescriptor");
+	jclass SerialPortClass 		= (*env)->GetObjectClass(env, thiz);
+	jclass FileDescriptorClass 	= (*env)->FindClass(env, "java/io/FileDescriptor");
 
-	jfieldID mFdID = (*env)->GetFieldID(env, SerialPortClass, "mFd", "Ljava/io/FileDescriptor;");
-	jfieldID descriptorID = (*env)->GetFieldID(env, FileDescriptorClass, "descriptor", "I");
+	jfieldID mFdID 				= (*env)->GetFieldID(env, SerialPortClass, "mFd", "Ljava/io/FileDescriptor;");
+	jfieldID descriptorID 		= (*env)->GetFieldID(env, FileDescriptorClass, "descriptor", "I");
 
-	jobject mFd = (*env)->GetObjectField(env, thiz, mFdID);
-	jint descriptor = (*env)->GetIntField(env, mFd, descriptorID);
+	jobject mFd 				= (*env)->GetObjectField(env, thiz, mFdID);
+	jint descriptor 			= (*env)->GetIntField(env, mFd, descriptorID);
 
 	//LOGD("close(fd = %d)", descriptor);
 	close(descriptor);

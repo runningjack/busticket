@@ -76,4 +76,24 @@ public class Ticketing {
     public int getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("{\"id\":\"" + this.getId() + "\",")
+                .append("\"scode\":\"" + this.getScode() + "\",")
+                .append("\"serial_no\":\""+this.getSerial_no()+"\",")
+                .append("\"trip\":\""+this.getTripe()+"\",")
+                .append("\"ticket_id\":\"" + this.getTicketing_id() + "\",")
+                .append("\"highlight_stage\":\""+this.getHighlight_stage() + "\",")
+                .append("\"board_stage\":\"" + this.getBoard_stage() + "\",")
+                .append("\"amount\":\"" + this.getFare() + "\",")
+                .append("\"bus_plate_no\":\"" + this.getBus_no() + "\",")
+                .append("\"qty\":\"" + this.getQty() + "\",")
+                .append("\"status\":\"" + this.getStatus() + "\",")
+                .append("\"route_name\":\"" + this.getRoute() + "\",")
+                .append("\"driver\":\"" + this.getDriver() + "\",")
+                .append("\"conductor\":\"" + this.getConductor() + "\"")
+                .append("}").toString();
+    }
 }

@@ -3,7 +3,7 @@
 /* Header for class android_serialport_api_SerialPort   com_busticket_amedora_busticketsrl_androidserialportapi_SerialPort*/
 
 #ifndef _Included_com_busticket_amedora_busticketsrl_androidserialportapi_SerialPort
-#define _Included_com_amedora_slrtcpos_androidserialportapi_SerialPort
+#define _Included_com_busticket_amedora_busticketsrl_androidserialportapi_SerialPort //_Included_com_amedora_slrtcpos_androidserialportapi_SerialPort
 #ifdef __cplusplus
 extern "C" {
 #endif

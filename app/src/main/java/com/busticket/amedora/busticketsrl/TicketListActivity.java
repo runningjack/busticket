@@ -109,7 +109,7 @@ public class TicketListActivity extends AppCompatActivity {
     };
 
     private void getTickets(){
-        String url ="http://41.77.173.124:81/srltcapi/public/tickets/data/"+Installation.appId(getApplicationContext());
+        String url ="http://platinumandco.com/slrtcapi/public/tickets/data/"+Installation.appId(getApplicationContext());
         JsonArrayRequest jsonArrayRequestTicket = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {

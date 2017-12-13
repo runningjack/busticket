@@ -24,6 +24,8 @@ public class AccountActivity extends AppCompatActivity {
     Apps apps;
     ArrayList<Ticket> ticket;
     DatabaseHelper db;
+
+
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_account);

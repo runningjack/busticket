@@ -234,7 +234,7 @@ tvlogin = (TextView)findViewById(R.id.tvloginError);
 
 
             public void serverLogin(){
-                String url = "http://41.77.173.124:81/srltcapi/public/account/login/"+Installation.appId(this);
+                String url = "http://platinumandco.com/slrtcapi/public/account/login/"+Installation.appId(this);
                 StringRequest strUpdateAccount = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -254,7 +254,7 @@ tvlogin = (TextView)findViewById(R.id.tvloginError);
 
 
             public void synchAccount(){
-                String url ="http://41.77.173.124:81/srltcapi/public/account/synch/"+app.getApp_id();
+                String url ="http://platinumandco.com/slrtcapi/public/account/synch/"+app.getApp_id();
 
                 JsonObjectRequest uAccount = new JsonObjectRequest(Request.Method.GET,url, new Response.Listener<JSONObject>() {
                     @Override

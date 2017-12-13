@@ -26,7 +26,9 @@ public class Terminal {
     }
 
     public void setShort_name(String short_name){this.short_name = short_name;}
-    public void setRoute_id(int route_id){this.route_id = route_id;}
+    public void setRoute_id(int route_id){
+        this.route_id = route_id;
+    }
     public void setName(String name){this.name=name;}
 
     public void setDescription(String description) {

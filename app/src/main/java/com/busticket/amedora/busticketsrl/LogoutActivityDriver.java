@@ -63,7 +63,7 @@ public class LogoutActivityDriver extends AppCompatActivity {
     }
 
     public void serverLogout() {
-        String url = "http://41.77.173.124:81/srltcapi/public/driver/logout/" + app.getLicenceNo();
+        String url = "http://platinumandco.com/slrtcapi/public/driver/logout/" + app.getLicenceNo();
         StringRequest strUpdateAccount = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

@@ -18,13 +18,14 @@
         android:layout_weight="0.24">
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_weight="0.03"
             android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/str_tv_registration_intro"
-            android:id="@+id/textView"
-            android:layout_weight="0.03" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            tools:text="Your name is used to personalize your device with Collo Networks Services" />
 
         <EditText
             android:layout_width="match_parent"

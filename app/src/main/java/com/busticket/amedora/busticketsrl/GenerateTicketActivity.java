@@ -330,6 +330,7 @@ public class GenerateTicketActivity extends SerialPortActivity {
             } else if (v == btnClose) {
                 mService.stop();
             } else if (v == btnSendDraw) {
+
                 db = new DatabaseHelper(getApplicationContext());
                 Bundle bundle = getIntent().getExtras();
                 board 		= bundle.getString("Board");
@@ -392,7 +393,7 @@ public class GenerateTicketActivity extends SerialPortActivity {
                                 //handler.sendMessage(handler.obtainMessage(DISABLE_BUTTON, 1, 0, null));
                                 new WriteThread(0).start();
                                 updateTicket();
-
+                                //
                                 handler.removeCallbacks(this);
                                 Looper.myLooper().quit();
                             }
@@ -403,6 +404,7 @@ public class GenerateTicketActivity extends SerialPortActivity {
 
 
             }
+            //PrinterPowerOff();
         }
 
 
@@ -523,6 +525,9 @@ public class GenerateTicketActivity extends SerialPortActivity {
         return true;
     }
 
+
+
+
     Bitmap encodeAsBitmap(String str) throws WriterException {
         BitMatrix result;
         WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
@@ -575,11 +580,12 @@ public class GenerateTicketActivity extends SerialPortActivity {
             ticketing.setScode(ticket.getScode());
             ticketing.setBus_no(busBoarded.getPlate_no());
             ticketing.setRoute(apps.getRoute_name());
+            //Unfortunately route id is not set
             ticketing.setTripe(trip);
             ticketing.setSerial_no(ticket.getSerial_no());
 
             if(db.createTicketing(ticketing) >0){
-                String url ="http://41.77.173.124:81/srltcapi/public/ticketing/create";
+                String url ="http://platinumandco.com/slrtcapi/public/ticketing/create";
                 HashMap<String, String> params = new HashMap<String, String>();
                 String ticket_id = Long.toString(ticket.getTicket_id());
                 params.put("ticket_id",ticket_id);
@@ -587,7 +593,7 @@ public class GenerateTicketActivity extends SerialPortActivity {
                 params.put("trip",trip);
                 params.put("amount",Double.toString(ticket.getAmount()));
                 params.put("app_id",apps.getApp_id());
-                params.put("route_id",Integer.toString(busBoarded.getRoute_id()));
+                params.put("route_id",Integer.toString(apps.getRoute_id()));//Integer.toString(busBoarded.getRoute_id()));
                 params.put("route_name",apps.getRoute_name());
                 params.put("bus_id",Integer.toString(busBoarded.getBus_id()));
                 params.put("bus_plate_no",busBoarded.getPlate_no());
@@ -601,7 +607,7 @@ public class GenerateTicketActivity extends SerialPortActivity {
                     params.put("driver",busBoarded.getDriver());
                 }else{
                     params.put("driver_id",Integer.toString(apps.getDriverID()));
-                    params.put("driver",apps.getLicenceNo() +" "+apps.getDriverFname()+" "+apps.getDriverLname());
+                    params.put("driver",apps.getLicenceNo());
                 }
 
                 params.put("status","0");
@@ -610,7 +616,7 @@ public class GenerateTicketActivity extends SerialPortActivity {
                 params.put("created_at",db.getDateTime());
                 JSONObject j = new JSONObject(params);
 
-                Log.d("ANDND",j.toString());
+                //Log.d("ANDND",j.toString());
 
                 JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,url, j, new Response.Listener<JSONObject>() {
                     @Override
@@ -637,7 +643,7 @@ public class GenerateTicketActivity extends SerialPortActivity {
                         Toast.makeText(GenerateTicketActivity.this,error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                int socketTimeout = 20000;//30 seconds - change to what you want
+                int socketTimeout = 20000; //30 seconds - change to what you want
                 RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
                 req.setRetryPolicy(policy);
             kQueue.add(req);
@@ -796,7 +802,7 @@ public class GenerateTicketActivity extends SerialPortActivity {
     }
 
     public void updateAccount(){
-        String url ="http://41.77.173.124:81/srltcapi/public/account/update/"+apps.getApp_id();
+        String url ="http://platinumandco.com/slrtcapi/public/account/update/"+apps.getApp_id();
         HashMap<String,String> params = new HashMap<String,String>();
         params.put("merchant_id",apps.getAgent_id());
         params.put("app_id",apps.getApp_id());
@@ -1138,7 +1144,7 @@ public class GenerateTicketActivity extends SerialPortActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // / sleep(1);
+        //sleep(1);
     }
 
     private void sendCharacterDemo() {
@@ -1175,9 +1181,9 @@ public class GenerateTicketActivity extends SerialPortActivity {
             }catch (Exception e){
                 Log.d(TAG,e.getMessage());
             }
-            mOutputStream.write(("DATE: " + db.getDate() + " " + startTime).getBytes());
+            mOutputStream.write(("DATE: " + db.getDate() + " " + startTime).getBytes()); //Output stream write text with getBytes
             //mOutputStream.write(("TIME: " + startTime + "\n").getBytes());
-            sendCommand(0x0a);
+            sendCommand(0x0a); // new line/carriage return
             sendCommand(0x1D, 0x21, 0x01);
             mOutputStream.write(("ROUTE: " + apps.getRoute_name() + "\n").getBytes());
             //sendCommand(0x0a);
@@ -1195,12 +1201,7 @@ public class GenerateTicketActivity extends SerialPortActivity {
                 k++;
             }
 
-            // Route route = db.getRouteByName("IKD-CMS");
-            //cmd[0] = 0x1b;
-            //cmd[1] = 0x21;
-
-
-            sendCommand(0x1d, 0x28, 0x6b, 150 + 3 + 1, 0x00, 0x31, 0x50, 0x30);
+            sendCommand(0x1d, 0x28, 0x6b, 150 + 3 + 1, 0x00, 0x31, 0x50, 0x30); // command to write QR code
 
            // sendCommand(qrCode);
             mOutputStream.write((qrCode));

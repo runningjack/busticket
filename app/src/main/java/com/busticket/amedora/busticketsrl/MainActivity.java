@@ -148,7 +148,7 @@ public class MainActivity extends Activity {
         });
     }
     public void synchAccount(){
-        String url ="http://41.77.173.124:81/srltcapi/public/account/synch/"+apps.getApp_id();
+        String url ="http://platinumandco.com/slrtcapi/public/account/synch/"+apps.getApp_id();
 
         JsonObjectRequest uAccount = new JsonObjectRequest(Request.Method.GET,url, new Response.Listener<JSONObject>() {
             @Override
@@ -216,6 +216,77 @@ public class MainActivity extends Activity {
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         uAccount.setRetryPolicy(policy);
         kQueue.add(uAccount);
+    }
+
+    public void synchTicketing(){
+        String url ="http://platinumandco.com/slrtcapi/public/ticketing/synch/"+apps.getApp_id();
+
+        JsonObjectRequest jsonObjectTicketing = new JsonObjectRequest(Request.Method.GET,url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try{
+                    JSONObject jsonObject= new JSONObject(response.toString());
+
+                    String code = jsonObject.getString("code");
+                    Toast.makeText(MainActivity.this,code, Toast.LENGTH_SHORT).show();
+                    if(code.equals("200")){
+                        JSONArray jsonArray = jsonObject.getJSONArray("data");
+                        JSONObject myapp = jsonArray.getJSONObject(0);
+                        Toast.makeText(MainActivity.this,myapp.toString(), Toast.LENGTH_SHORT).show();
+
+                        apps.setRoute_id(myapp.getInt("route_id"));
+                        apps.setTerminal_id(myapp.getInt("sation_id"));
+                        apps.setRoute_name(myapp.getString("route_name"));
+                        apps.setTerminal(myapp.getString("station_name"));
+                        apps.setBalance(myapp.getDouble("balance"));
+                        apps.setStatus(myapp.getInt("status"));
+                        apps.setAgent_code(myapp.getString("agent_code"));
+                        //apps.setIs_logged_in(cursor.getColumnIndex(KEY_APP_IS_LOGGED_IN));
+                        //apps.setBusID(cursor.getInt(cursor.getColumnIndex(KEY_APP_BUS_ID)));
+                        //apps.setScheduleID(cursor.getInt(cursor.getColumnIndex(KEY_APP_SCHEDULE_ID)));
+                        //apps.setDriverFname(cursor.getString(cursor.getColumnIndex(KEY_APP_DRIVER_FNAME)));
+                        //apps.setDriverLname(cursor.getString(cursor.getColumnIndex(KEY_APP_DRIVER_LNAME)));
+                        //apps.setDriverID(cursor.getInt(cursor.getColumnIndex(KEY_APP_DRIVER_ID)));
+                        //apps.setTripCount(cursor.getInt(cursor.getColumnIndex(KEY_APP_TRIPS)));
+
+                        apps.setAppMode(myapp.getInt("app_mode"));
+
+
+                        if(db.updateApp(apps)>0){
+                            Toast.makeText(MainActivity.this,"Account Synchronized Successfully", Toast.LENGTH_SHORT).show();
+
+                        }else{
+                            Toast.makeText(MainActivity.this,"Unexpected Error! Record could not be synchronized", Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    }else {
+                        //errTv.setText("License Number does not exist in SRLTC Database");
+                        Toast.makeText(MainActivity.this,"Server Error", Toast.LENGTH_SHORT).show();
+                    }
+
+
+
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                    Log.e("Sysnc Err", ex.getMessage());
+                    Toast.makeText(MainActivity.this,ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    VolleyLog.d("Driver Err", ex.getMessage());
+                }
+
+                Toast.makeText(MainActivity.this, "Account Updated", Toast.LENGTH_SHORT).show();
+            }
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, "Account balance could not be updated Unexpected Errors", Toast.LENGTH_SHORT).show();
+            }
+        });
+        int socketTimeout = 20000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsonObjectTicketing.setRetryPolicy(policy);
+        kQueue.add(jsonObjectTicketing);
     }
 
     @Override

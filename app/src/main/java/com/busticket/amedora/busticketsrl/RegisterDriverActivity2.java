@@ -62,8 +62,8 @@ public class RegisterDriverActivity2 extends AppCompatActivity {
             public void onClick(View v) {
                 if (checkValidation()) {
 
-
-                    dialog = ProgressDialog.show(RegisterDriverActivity2.this, "", "Setting up your ticketing app. Please wait...", true);
+                    postUpdateDriverDetails();
+                    /*dialog = ProgressDialog.show(RegisterDriverActivity2.this, "", "Setting up your ticketing app. Please wait...", true);
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -85,7 +85,7 @@ public class RegisterDriverActivity2 extends AppCompatActivity {
 
                             Looper.loop();
                         }
-                    }).start();
+                    }).start();*/
 
 
                 } else {
@@ -100,10 +100,11 @@ public class RegisterDriverActivity2 extends AppCompatActivity {
     }
 
     public void postUpdateDriverDetails() {
+        dialog = ProgressDialog.show(RegisterDriverActivity2.this, "", "Updating Driver's Data. Please wait...", true);
         DatabaseHelper db = new DatabaseHelper(getApplicationContext());
         Apps app2 = db.getApp(Installation.appId(getApplicationContext()));
 
-        String url = "http://41.77.173.124:81/srltcapi/public/driver/update/" + app2.getLicenceNo();// Installation.appId(getApplicationContext());
+        String url = "http://platinumandco.com/slrtcapi/public/driver/update/" + app2.getLicenceNo();// Installation.appId(getApplicationContext());
         HashMap<String, String> params = new HashMap<String, String>();
         //String ticket_id = Long.toString(ticket.getTicket_id());
         params.put("route_id",Integer.toString(app2.getRoute_id()));
@@ -175,7 +176,7 @@ public class RegisterDriverActivity2 extends AppCompatActivity {
                     }
 
 
-
+                dialog.dismiss();
                 }catch (Exception ex){
 
                     ex.printStackTrace();
@@ -192,6 +193,7 @@ public class RegisterDriverActivity2 extends AppCompatActivity {
 
                 Toast.makeText(RegisterDriverActivity2.this,error.getMessage(), Toast.LENGTH_SHORT).show();
                 VolleyLog.d("Driver Err", error.getMessage());
+                dialog.dismiss();
             }
         });
         int socketTimeout = 20000;//30 seconds

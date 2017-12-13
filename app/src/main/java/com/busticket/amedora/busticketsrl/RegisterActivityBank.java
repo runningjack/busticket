@@ -16,9 +16,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -65,9 +68,9 @@ public class RegisterActivityBank extends AppCompatActivity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sendData();
 
-                dialog = ProgressDialog.show(RegisterActivityBank.this, "", "Setting up your ticketing app. Please wait...", true);
-                new Thread(new Runnable() {
+                /*new Thread(new Runnable() {
                     @Override
                     public void run() {
 
@@ -79,14 +82,13 @@ public class RegisterActivityBank extends AppCompatActivity {
                             public void run() {
                                 sendData();
                                 handler.removeCallbacks(this);
-
                                 Looper.myLooper().quit();
                             }
-                        }, 30000);
+                        }, 3000);
 
                         Looper.loop();
                     }
-                }).start();
+                }).start();*/
 
             }
         });
@@ -104,7 +106,28 @@ public class RegisterActivityBank extends AppCompatActivity {
                 ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
                 busroute = parent.getItemAtPosition(position).toString();
                 Route rt = db.getRouteByName(busroute);
-                //getLoadStationSpanner(rt.getRoute_id());
+
+                bankList = new ArrayList<HashMap<String, String>>();
+                List<Terminal> terminal = db.getTerminalsByRouteId(rt.getRoute_id());
+
+                dias = new String[terminal.size()];
+                for (int i = 0; i < terminal.size(); i++) {
+                    Terminal s = terminal.get(i);
+                    // creating new HashMap
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    // adding each child node to HashMap key => value
+                    map.put(TAG_BANK_NAME, String.valueOf(s.getShort_name()));
+                    // adding HashList to ArrayList
+                    bankList.add(map);
+                    // add sqlite id to array
+                    // used when deleting a website from sqlite
+                    dias[i] = String.valueOf(s.getShort_name());
+                }
+
+                ArrayAdapter adps = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_spinner_item,dias);
+                adps.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spStation.setAdapter(adps);
+
             }
 
             @Override
@@ -113,7 +136,7 @@ public class RegisterActivityBank extends AppCompatActivity {
             }
         });
 
-        spStation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+       spStation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
@@ -125,11 +148,11 @@ public class RegisterActivityBank extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
-        });
+       });
 
         DatabaseHelper dbTerminalL = new DatabaseHelper(this);
         bankList = new ArrayList<HashMap<String, String>>();
-        List<Terminal> terminal = dbTerminalL.getAllTerminals();
+        List<Terminal> terminal = dbTerminalL.getAllTerminals(); //
         System.out.println(terminal.size());
         // loop through each website
         dias = new String[terminal.size()];
@@ -146,9 +169,9 @@ public class RegisterActivityBank extends AppCompatActivity {
             dias[i] = String.valueOf(s.getShort_name());
         }
 
-        ArrayAdapter adp = new ArrayAdapter(this,android.R.layout.simple_spinner_item,dias);
-        adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spStation.setAdapter(adp);
+       // ArrayAdapter adp = new ArrayAdapter(this,android.R.layout.simple_spinner_item,dias);
+        //adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //spStation.setAdapter(adp);
 
         routeList = new ArrayList<HashMap<String, String>>();
         List<Route> route = db.getAllRoute();
@@ -172,6 +195,7 @@ public class RegisterActivityBank extends AppCompatActivity {
     }
 
     private void  sendData(){
+        dialog = ProgressDialog.show(RegisterActivityBank.this, "", "Setting up your ticketing app. Please wait...", true);
        final Apps app = db.getApp(Installation.appId(getApplicationContext()));
         Terminal terminal = db.getTerminalByName(station);
         Route route = db.getRouteByName(busroute);
@@ -183,7 +207,7 @@ public class RegisterActivityBank extends AppCompatActivity {
         app.setStatus(1);
 
         if(true){
-            String url ="http://41.77.173.124:81/srltcapi/public/account/create";
+            String url ="http://platinumandco.com/slrtcapi/public/account/create";
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("route_id", Integer.toString(route.getRoute_id()));
             params.put("route_name",route.getShort_name());
@@ -199,11 +223,13 @@ public class RegisterActivityBank extends AppCompatActivity {
                 @Override
                 public void onResponse(JSONObject response) {
                     try{
-                        if(Boolean.parseBoolean(response.getString("success")) == true){
-                            Toast.makeText(RegisterActivityBank.this,response.getString("msg"), Toast.LENGTH_SHORT).show();
+                        if(response.getString("code").equals("200")){
+
 
                             app.setStatus(1); //set application satus to active
+                            app.setIs_logged_in(1);
                             app.setAgent_code(response.getString("agentCode"));
+                            Toast.makeText(RegisterActivityBank.this,response.getString("msg"), Toast.LENGTH_SHORT).show();
                             if(db.updateApp(app)>0){
                                 Intent intent = new Intent(RegisterActivityBank.this,TicketingHomeActivity.class);
                                 startActivity(intent);
@@ -212,14 +238,14 @@ public class RegisterActivityBank extends AppCompatActivity {
                             }
 
                         }else{
-                            //db.deleteApps(app);
-                            dialog.cancel();
+
                             Toast.makeText(RegisterActivityBank.this,response.getString("msg")+app.getAgent_id(), Toast.LENGTH_SHORT).show();
                        }
                     }catch (Exception e){
-                        dialog.cancel();
+
                         Toast.makeText(RegisterActivityBank.this,e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
+                    dialog.dismiss();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -228,12 +254,16 @@ public class RegisterActivityBank extends AppCompatActivity {
 //                    Log.d("BTICKET",error.getMessage());
                     VolleyLog.d("BTICKET", "Error: " + error.getMessage());
                     Toast.makeText(RegisterActivityBank.this,error.getMessage(), Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
 
                 }
             });
+            int socketTimeout = 3000;//30 seconds
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, 2, 2);
+            req.setRetryPolicy(policy);
             kQueue.add(req);
         }
-        dialog.cancel();
+
     }
 
     private boolean checkValidation() {

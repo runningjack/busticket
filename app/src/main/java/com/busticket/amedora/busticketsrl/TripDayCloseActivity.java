@@ -74,8 +74,8 @@ public class TripDayCloseActivity extends AppCompatActivity {
 
             }
         });
-        int socketTimeout = 30000;//30 seconds - change to what you want
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        int socketTimeout = 3000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,2,2);
         strUpdateAccount.setRetryPolicy(policy);
         rqRequest.add(strUpdateAccount);
     }
@@ -110,8 +110,8 @@ public class TripDayCloseActivity extends AppCompatActivity {
 
                 }
             });
-            int socketTimeout = 30000;//30 seconds - change to what you want
-            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            int socketTimeout = 2000;//30 seconds - change to what you want
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,2,2);
             jsonObjectRequestTrips.setRetryPolicy(policy);
             rqTrip.add(jsonObjectRequestTrips);
         }

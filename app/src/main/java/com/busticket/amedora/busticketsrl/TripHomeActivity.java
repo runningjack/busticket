@@ -282,22 +282,23 @@ public class TripHomeActivity extends AppCompatActivity {
                         Toast.makeText(TripHomeActivity.this, ex.getMessage(), Toast.LENGTH_SHORT).show();
                         VolleyLog.d("Driver Err", ex.getMessage());
                     }
+                    pDialog.dismiss();
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-
+                    pDialog.dismiss();
                     Toast.makeText(TripHomeActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
                     VolleyLog.d("Driver Err", error.getMessage());
                 }
             });
-            int socketTimeout = 20000;//20 seconds
-            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            int socketTimeout = 3000;//20 seconds
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,2,2);
             jsonObjectRequest.setRetryPolicy(policy);
             rQDriver.add(jsonObjectRequest);
         }else{
             Toast.makeText(TripHomeActivity.this, "Unexpected Error! Trip could not be saved", Toast.LENGTH_SHORT).show();
-
+            pDialog.dismiss();
         }
 
     }
@@ -360,19 +361,19 @@ public class TripHomeActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-
+                    pDialog.dismiss();
                     Toast.makeText(TripHomeActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
                     VolleyLog.d("Driver Err", error.getMessage());
                 }
             });
-            int socketTimeout = 20000;//20 seconds
-            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            int socketTimeout = 2000;//20 seconds
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,2, 2);
             jsonObjectRequest.setRetryPolicy(policy);
             QDriver.add(jsonObjectRequest);
 
         }else{
             Toast.makeText(TripHomeActivity.this, "Unexpected Error! Trip could not be updated", Toast.LENGTH_SHORT).show();
-
+            pDialog.dismiss();
         }
     }
 

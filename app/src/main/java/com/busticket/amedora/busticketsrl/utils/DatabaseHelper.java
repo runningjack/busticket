@@ -426,7 +426,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase dbgTripByName = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM "+TABLE_TRIP+" WHERE "
                 + KEY_APP_STATUS +" = 0";
-        Cursor cursor = dbgTripByName.rawQuery(selectQuery,null);
+        Cursor cursor = dbgTripByName.rawQuery(selectQuery, null);
         if(cursor.getCount() > 0 && cursor != null) {
             cursor.moveToFirst();
             trip.setTrip_ID(cursor.getString(cursor.getColumnIndex(KEY_TRIP_ID)));
@@ -493,7 +493,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_ROUTE_DESCRIPTION,route.getDescription());
         values.put(KEY_ROUTE_DISTANCE,route.getDistance());
         values.put(KEY_CREATED_AT,getDateTime());
-        values.put(KEY_UPDATED_AT,getDateTime());
+        values.put(KEY_UPDATED_AT, getDateTime());
         long acc_id = dbCRoute.insert(TABLE_ROUTE, null, values);
         dbCRoute.close();
         return acc_id;
@@ -600,7 +600,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_BANK_CODE,account.getSort_code());
         values.put(KEY_BANK_NAME,account.getBank());
         values.put(KEY_CREATED_AT,getDateTime());
-        values.put(KEY_UPDATED_AT,getDateTime());
+        values.put(KEY_UPDATED_AT, getDateTime());
         long acc_id = dbcAcc.insert(TABLE_ACCOUNT, null, values);
 
         dbcAcc.close();
@@ -631,7 +631,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteAccount(Account account) {
         SQLiteDatabase dbdAcc = this.getWritableDatabase();
         dbdAcc.delete(TABLE_ACCOUNT, KEY_ID + " = ?",
-                new String[] { String.valueOf(account.getId()) });
+                new String[]{String.valueOf(account.getId())});
         dbdAcc.close();
     }
 
@@ -639,7 +639,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase dbiffAcc = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM "+TABLE_ACCOUNT+" WHERE "
                 +KEY_BANK_NAME + " ='" +account.getBank()+"' AND "+KEY_ACCOUNT_NO+ "= "+account.getAccount_no()+"";
-        Cursor cursor = dbiffAcc.rawQuery(selectQuery,null);
+        Cursor cursor = dbiffAcc.rawQuery(selectQuery, null);
 
         if(cursor.moveToFirst()) {
             cursor.close();
@@ -692,7 +692,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_BANK_CODE,bank.getSort_code());
         values.put(KEY_BANK_ADDRESS,bank.getAddress());
         values.put(KEY_CREATED_AT,getDateTime());
-        values.put(KEY_UPDATED_AT,getDateTime());
+        values.put(KEY_UPDATED_AT, getDateTime());
         long bank_id = dbcreateBank.insert(TABLE_BANKS, null, values);
         dbcreateBank.close();
         return bank_id;
@@ -714,7 +714,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // updating row
 
         int k= dbupdateBank.update(TABLE_BANKS, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(bank.getId()) });
+                new String[]{String.valueOf(bank.getId())});
         dbupdateBank.close();
         return k;
 
@@ -903,12 +903,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             apps.setDriverPassword(cursor.getString(cursor.getColumnIndex(KEY_APP_DRIVER_PASSWORD)));
             apps.setUpdated_at(cursor.getString(cursor.getColumnIndex(KEY_UPDATED_AT)));
             cursor.close();
+            dbgetApp.close();
+            return apps;
         }else {
-            apps = null;
+            cursor.close();
+            dbgetApp.close();
+            return null;
+
         }
 
-        dbgetApp.close();
-        return apps;
+
     }
 
 
@@ -1275,10 +1279,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ticketList.add(ticket);
                 } while (cursor.moveToNext());
             }
+            cursor.close();
+            dbgetUnusedTicket.close();
+            return ticketList;
+        }else{
+            cursor.close();
+            dbgetUnusedTicket.close();
+            return null;
         }
-        cursor.close();
-        dbgetUnusedTicket.close();
-        return ticketList;
+
     }
 
     public ArrayList<Ticket> getUnusedTickets(){
@@ -1566,11 +1575,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ticketing.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_TICKET_STATUS)));
                 ticketList.add(ticketing);
             } while (cursor.moveToNext());
+
+            cursor.close();
+            dbgetAllTicketings.close();
+            return ticketList;
+        }else{
+            cursor.close();
+            dbgetAllTicketings.close();
+            return null;
         }
         // return contact list
-        cursor.close();
-        dbgetAllTicketings.close();
-        return ticketList;
+
     }
 
     public Ticketing getTicketingByTicketId(String ticketID){

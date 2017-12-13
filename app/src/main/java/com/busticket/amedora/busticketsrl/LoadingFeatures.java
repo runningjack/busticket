@@ -1,6 +1,7 @@
 package com.busticket.amedora.busticketsrl;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +30,7 @@ public class LoadingFeatures extends Activity {
     RequestQueue kQueue, mQueue,dQueue,bQueue;
     Button btnLoad;
     TextView tvLoadFeature;
+    ProgressDialog progressRoute, progressBus, progressStation = null;
     boolean tk =false;
     boolean tl = false; boolean rt =false;
     protected void onCreate(Bundle savedInstanceState){
@@ -67,7 +69,7 @@ public class LoadingFeatures extends Activity {
     }
     public void getTicketing(){
         Apps apps = new Apps();
-        String url ="http://41.77.173.124:81/srltcapi/public/ticketing/data/"+apps.getRoute_id();
+        String url ="http://platinumandco.com/slrtcapi/public/ticketing/data/"+apps.getRoute_id();
 
         JsonArrayRequest jsonTicket = new JsonArrayRequest(Request.Method.GET,url,new Response.Listener<JSONArray>() {
             @Override
@@ -119,7 +121,17 @@ public class LoadingFeatures extends Activity {
         kQueue.add(jsonTicket);
     }
     public void getRoutes(){
-        String url = "http://41.77.173.124:81/srltcapi/public/route/index";
+
+
+
+       /* progress=new ProgressDialog(this);
+        progress.setMessage("Setting up your APP! please wait..Loading Routes...");
+        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progress.setIndeterminate(true);
+        progress.setProgress(0);
+        progress.show();*/
+        progressRoute = ProgressDialog.show(LoadingFeatures.this, "", "Loading Route Data. Please wait...", true);
+        String url = "http://platinumandco.com/slrtcapi/public/route/index";
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -153,21 +165,27 @@ public class LoadingFeatures extends Activity {
                     rt = false;
                     Toast.makeText(LoadingFeatures.this, e.getMessage() + "Please Click on refresh", Toast.LENGTH_SHORT).show();
                 }
+                progressRoute.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressRoute.dismiss();
                 rt = false;
                 Toast.makeText(LoadingFeatures.this, "Network Connection error! Please Click on refresh", Toast.LENGTH_SHORT).show();
+
             }
         });
+        int socketTimeout = 5000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,2,2);
+        jsonArrayRequest.setRetryPolicy(policy);
         mQueue.add(jsonArrayRequest);
-
     }
     private void insertTerminals(){
         //RequestQueue requestQueue = new RequestQueue(m)
         //mQueue = Volley.newRequestQueue(getApplicationContext());
-        String url ="http://41.77.173.124:81/srltcapi/public/terminals/index";
+        progressStation = ProgressDialog.show(LoadingFeatures.this, "", "Loading Station Data. Please wait...", true);
+        String url ="http://platinumandco.com/slrtcapi/public/terminals/index";
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -199,6 +217,7 @@ public class LoadingFeatures extends Activity {
 
                     }
                     tl =true;
+                    progressStation.dismiss();
                 }catch (Exception e){
                     tl =false;
                     Toast.makeText(LoadingFeatures.this, e.getMessage() + "Please Click on refresh", Toast.LENGTH_SHORT).show();
@@ -207,15 +226,20 @@ public class LoadingFeatures extends Activity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressStation.dismiss();
                 tl =false;
                 Toast.makeText(LoadingFeatures.this, "Network Connection error! Please Click on refresh", Toast.LENGTH_SHORT).show();
             }
         });
+        int socketTimeout = 3000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,2,2);
+        jsonArrayRequest.setRetryPolicy(policy);
         dQueue.add(jsonArrayRequest);
     }
     private void insertBuses(){
         //RequestQueue requestQueue = new RequestQueue(m)
-        String url ="http://41.77.173.124:81/srltcapi/public/buses/index";
+        progressBus = ProgressDialog.show(LoadingFeatures.this, "", "Loading Bus Data. Please wait...", true);
+        String url ="http://platinumandco.com/slrtcapi/public/buses/index";
         JsonArrayRequest jsonArrayRequestBus = new JsonArrayRequest(Request.Method.GET,url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -239,32 +263,30 @@ public class LoadingFeatures extends Activity {
                             bus.setPlate_no(term.getString("plate_no"));
                             bus.setConductor(term.getString("conductor"));
                             bus.setRoute_id(term.getInt("route_id"));
-
                             long u = db.createBus(bus);
                             String numberAsString = new Double(u).toString();
                             String counte = new Double(i).toString();
                             Toast.makeText(LoadingFeatures.this,numberAsString+", "+counte, Toast.LENGTH_SHORT).show();
                         }
-
                     }
-
                 }catch (Exception e){
                     VolleyLog.d("Error: " + e.getMessage());
                     Toast.makeText(LoadingFeatures.this, "Network Error", Toast.LENGTH_SHORT).show();
                 }
+                progressBus.dismiss();
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBus.dismiss();
                 VolleyLog.d("Error: " + error.getMessage());
                 Toast.makeText(LoadingFeatures.this, error.toString(), Toast.LENGTH_SHORT).show();
-                // hide the progress dialog
-                //pDialog.hide();
+
             }
         });
-        int socketTimeout = 10000;//30 seconds - change to what you want
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        int socketTimeout = 4000;//30 seconds - change to what you want
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,2,2);
         jsonArrayRequestBus.setRetryPolicy(policy);
         bQueue.add(jsonArrayRequestBus);
     }
